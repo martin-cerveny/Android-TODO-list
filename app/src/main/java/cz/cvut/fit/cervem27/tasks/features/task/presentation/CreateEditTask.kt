@@ -69,15 +69,17 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.navigation.NavController
 import com.google.android.gms.tagmanager.Container
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIcon
 import java.text.SimpleDateFormat
 import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun CreateEditTask(){
+fun CreateEditTask(
+    navController: NavController
+){
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -105,19 +107,22 @@ fun CreateEditTask(){
             TaskEntry()
             Date()
             Spacer(modifier = Modifier.weight(1f))
-            ConfirmButtons()
+            ConfirmButtons(
+                onCreateClick = {navController.navigateUp()},
+                onCancelClick = {navController.navigateUp()}
+            )
         }
     }
 }
 
 @Composable
-fun ConfirmButtons(){
+fun ConfirmButtons(onCreateClick: () -> Unit, onCancelClick: () -> Unit){
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ){
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {onCancelClick()},
             modifier = Modifier
                 .padding(8.dp)
 
@@ -129,7 +134,7 @@ fun ConfirmButtons(){
         }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {onCancelClick()},
             modifier = Modifier
                 .padding(8.dp)
 

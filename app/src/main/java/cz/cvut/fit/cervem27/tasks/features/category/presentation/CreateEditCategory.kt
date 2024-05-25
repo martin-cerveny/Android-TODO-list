@@ -58,20 +58,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.android.gms.tagmanager.Container
 import cz.cvut.fit.cervem27.tasks.R
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun CreateEditCategory(){
+fun CreateEditCategory(
+    navController: NavController
+){
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 actions = {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {navController.navigateUp()},
                         modifier = Modifier
                             .padding(8.dp)
 
@@ -87,7 +89,11 @@ fun CreateEditCategory(){
                             .padding(8.dp)
                             .size(30.dp)
                             .clip(CircleShape)
-                            .background(Color.Gray),
+                            .background(Color.Gray)
+                            .clickable (
+                               onClick = {navController.navigateUp()}
+                            )
+                        ,
                         tint = MaterialTheme.colorScheme.background,
                         contentDescription = null,
 

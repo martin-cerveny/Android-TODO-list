@@ -3,4 +3,6 @@
     <string name="category_name">Category name</string>
     <string name="search_icon">Search icon</string>
     <string name="task">Task</string>
+    <string name="tasks">Tasks</string>
+    <string name="categories">Categories</string>
 </resources>
