@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.CreateEditCategory
+import cz.cvut.fit.cervem27.tasks.features.task.presentation.CreateEditTask
 import cz.cvut.fit.cervem27.tasks.ui.theme.TasksTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,9 +21,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TasksTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CreateEditCategory()
-                }
+
+                   // CreateEditCategory()
+                    CreateEditTask()
+
             }
         }
     }
