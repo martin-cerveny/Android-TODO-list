@@ -81,6 +81,7 @@ fun CreateEditCategory(
                         Text(text = "Create")
                     }
                 },
+
                 navigationIcon = {
 
                     Icon(
@@ -105,7 +106,8 @@ fun CreateEditCategory(
 
 
             )
-        }
+        },
+        bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
     ){
         Column(modifier = Modifier
             .padding(it)

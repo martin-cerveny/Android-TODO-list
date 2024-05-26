@@ -98,7 +98,8 @@ fun CreateEditTask(
                 }
                 
             )
-        }
+        },
+        bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
     ) {
         Column(
             modifier = Modifier.padding(it)
