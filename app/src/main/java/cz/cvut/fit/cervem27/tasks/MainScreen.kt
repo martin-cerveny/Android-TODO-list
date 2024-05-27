@@ -38,9 +38,6 @@ fun MainScreen() {
         bottomBar = {
             if (shouldShowBottomNavigation) {
                 BottomAppBar {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-
                     NavigationBarItem(
                         painter = painterResource(id = R.drawable.baseline_task_alt_24),
                         name = stringResource(id = R.string.tasks),

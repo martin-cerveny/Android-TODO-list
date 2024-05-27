@@ -1,12 +1,11 @@
 [versions]
 agp = "8.4.0"
 coilCompose = "2.6.0"
-kotlin = "1.9.0"
+kotlin = "1.9.23"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.8.0"
 activityCompose = "1.9.0"
 composeBom = "2023.08.00"
 playServicesTagmanagerV4Impl = "18.0.4"
@@ -14,11 +13,13 @@ navigationCompose = "2.7.0"
 okhttp = "4.12.0"
 retrofit = "2.9.0"
 kotlinxSerializationJson = "1.5.0"
-kotlinSerialization = "1.9.0"
+kotlinSerialization = "1.9.23"
 retrofitKotlinxSerializationConverter = "0.8.0"
 room = "2.6.1"
 koin = "3.5.3"
-lifecycleRuntimeComposeAndroid = "2.8.0"
+lifecycleVersion = "2.7.0"
+ksp = "1.9.23-1.0.19"
+
 
 
 [libraries]
@@ -28,7 +29,7 @@ coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coilCompose
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -50,12 +51,14 @@ roomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = 
 koinBom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
 koinAndroid = { group = "io.insert-koin", name = "koin-android" }
 koinAndroidxCompose = { group = "io.insert-koin", name = "koin-androidx-compose" }
-androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
-
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 

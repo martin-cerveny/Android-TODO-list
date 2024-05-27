@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import org.koin.androidx.compose.koinViewModel
@@ -50,7 +51,7 @@ fun CreateEditCategory(
     navController: NavController,
     viewModel: CreateCategoryViewModel = koinViewModel(),
 ){
-    val screenState by viewModel.categoryStateStream.collectAsState()
+    val screenState by viewModel.categoryStateStream.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
             TopAppBar(

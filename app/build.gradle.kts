@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -41,7 +42,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
@@ -62,7 +63,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.play.services.tagmanager.v4.impl)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose.android)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,12 +75,16 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
+
     implementation(libs.okhttp)
     implementation(libs.okhttpLoggingInterceptor)
     implementation(libs.retrofit)
     implementation(libs.kotlinxSerializationJson)
     implementation(libs.retrofitKotlinxSerializationConverter)
+
     implementation(libs.roomKtx)
+    ksp(libs.roomCompiler)
+
 
     implementation(platform(libs.koinBom))
     implementation(libs.koinAndroid)
