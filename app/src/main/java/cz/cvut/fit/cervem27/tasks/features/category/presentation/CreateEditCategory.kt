@@ -1,18 +1,12 @@
 package cz.cvut.fit.cervem27.tasks.features.category.presentation
 
-import android.graphics.drawable.Icon
-import android.text.InputFilter
-import android.widget.GridLayout
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,49 +18,39 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ModifierInfo
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.android.gms.tagmanager.Container
 import cz.cvut.fit.cervem27.tasks.R
+import org.koin.androidx.compose.koinViewModel
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEditCategory(
-    navController: NavController
+    navController: NavController,
+    viewModel: CreateCategoryViewModel = koinViewModel(),
 ){
+    val screenState by viewModel.categoryStateStream.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
@@ -91,8 +75,8 @@ fun CreateEditCategory(
                             .size(30.dp)
                             .clip(CircleShape)
                             .background(Color.Gray)
-                            .clickable (
-                               onClick = {navController.navigateUp()}
+                            .clickable(
+                                onClick = { navController.navigateUp() }
                             )
                         ,
                         tint = MaterialTheme.colorScheme.background,
@@ -112,13 +96,24 @@ fun CreateEditCategory(
         Column(modifier = Modifier
             .padding(it)
             .padding(8.dp)) {
-            Header()
+            Header(
+                categoryName = screenState.categoryName,
+                icon = screenState.selectedIcon,
+                onCategoryNameChange = viewModel::onCategoryNameChange
+            )
             Spacer(modifier = Modifier.height(20.dp))
-            ColorsPicker()
+            ColorsPicker(screenState.colors, screenState.selectedColorIndex, viewModel::onClickColor)
             Spacer(modifier = Modifier.height(20.dp))
-            SearchIconHeader()
+            SearchIconHeader(
+                screenState.iconQuery,
+                viewModel::onIconsSearchQueryChange
+            )
             Spacer(modifier = Modifier.height(20.dp))
-            SearchIconResults(modifier = Modifier.weight(1f))
+            SearchIconResults(
+                screenState.iconsResult,
+                modifier = Modifier.weight(1f),
+                onIconSelect = viewModel::onIconChange
+            )
         }
     }
 }
@@ -126,7 +121,10 @@ fun CreateEditCategory(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchIconHeader(){
+fun SearchIconHeader(
+    iconSearchQuery: String,
+    onIconSearchQueryChange: (String) -> Unit
+){
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.height(70.dp)
@@ -135,8 +133,9 @@ fun SearchIconHeader(){
 
 
         TextField(
-            value = "textFieldValue",
+            value = iconSearchQuery,
             onValueChange = {
+                onIconSearchQueryChange(it)
             },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -152,55 +151,62 @@ fun SearchIconHeader(){
 }
 
 @Composable
-fun SearchIconResults(modifier: Modifier = Modifier){
-    val icons: List<ImageVector> = listOf(Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,)
+fun SearchIconResults(
+    icons: List<Icon>,
+    modifier: Modifier = Modifier,
+    onIconSelect: (String) -> Unit
+){
+//    val icons: List<ImageVector> = listOf(Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,)
 
     LazyVerticalGrid(
-        modifier = modifier
-            .background(color = Color(0xFF343434), shape = RoundedCornerShape(16.dp)),
+        modifier = modifier,
         columns = GridCells.Fixed(6),
     ) {
         items(icons){icon ->
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(50.dp)
+//            Icon(
+//                imageVector = icon,
+//                contentDescription = null,
+//                modifier = Modifier.size(50.dp)
+//            )
+//            MySvgImage(url = icon.url, color = icon.color, modifier = Modifier.padding(8.dp))
+            CategoryIcon(
+                icon,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clickable(
+                        onClick = {onIconSelect(icon.url)}
+                    )
             )
-
         }
     }
 
 }
 
 @Composable
-fun ColorsPicker(){
+fun ColorsPicker(
+    colors: List<Color>,
+    selected: Int,
+    onClickColor: (Int) -> Unit
+){
     val circleSize = 40.dp
-
-    val colors = listOf(
-        Color(0xFFFD9854),
-        Color(0xFFD15E5E),
-        Color(0xFFD15EBB),
-        Color(0xFF86DC86),
-        Color(0xFF4DA8CB),
-        Color(0xFFE1D5F2),
-
-    )
 
     Row (
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly
     ){
-        for(color in colors){
-           Box(modifier = Modifier
-               .size(circleSize)
-               .background(color = color.copy(alpha = 0.5f), shape = CircleShape)
+        for ((index, color) in colors.withIndex()) {
+
+           Box(modifier = if(selected == index) Modifier
+                   .size(circleSize)
+                   .background(color = color.copy(alpha = 0.5f), shape = CircleShape)
+                 else Modifier.size(circleSize)
            ){
                Box(
                    modifier = Modifier
                        .padding(4.dp)
                        .clip(CircleShape)
                        .fillMaxSize()
-                       .clickable(onClick = {/*todo*/ })
+                       .clickable(onClick = {onClickColor(index)})
                        .background(color = color)
 
                )
@@ -210,20 +216,25 @@ fun ColorsPicker(){
 }
 
 @Composable
-fun Header(){
+fun Header(
+    categoryName: String,
+    icon: Icon,
+    onCategoryNameChange: (String) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CategoryIcon(
+            icon,
             modifier = Modifier
                 .padding(top = 7.dp)
                 .size(50.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))
         OutlinedTextField(
-            value = "Category",
+            value = categoryName,
             label = { Text(stringResource(R.string.category_name)) },
-            onValueChange = {},
+            onValueChange = {onCategoryNameChange(it)},
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .fillMaxWidth(),
@@ -235,19 +246,21 @@ fun Header(){
 
 
 @Composable
-fun CategoryIcon(modifier: Modifier = Modifier){
+fun CategoryIcon(
+    icon: Icon,
+    modifier: Modifier = Modifier
+){
     Box(
         modifier = modifier
-            .background(color = Color(0xFFFD9854), shape = RoundedCornerShape(14.dp))
+            .background(color = icon.color, shape = RoundedCornerShape(14.dp))
 
     ) {
-        Icon(
-            imageVector = Icons.Default.ShoppingCart,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.background,
+        MySvgImage(
+            url = icon.url,
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxSize(),
         )
+
     }
 }

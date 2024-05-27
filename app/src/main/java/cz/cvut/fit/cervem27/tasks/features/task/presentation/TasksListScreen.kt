@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -25,14 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.features.category.Category
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIcon
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.MySvgImage
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import cz.cvut.fit.cervem27.tasks.features.task.domain.tasks
@@ -81,9 +78,8 @@ fun TaskCard(task: Task){
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            MySvgImage(
-                url = task.category.image,
-                color = task.category.color,
+            CategoryIcon(
+               task.category.icon,
                 modifier = Modifier
                     .size(60.dp)
                     .padding(8.dp)

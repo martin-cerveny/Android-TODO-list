@@ -11,6 +11,14 @@ activityCompose = "1.9.0"
 composeBom = "2023.08.00"
 playServicesTagmanagerV4Impl = "18.0.4"
 navigationCompose = "2.7.0"
+okhttp = "4.12.0"
+retrofit = "2.9.0"
+kotlinxSerializationJson = "1.5.0"
+kotlinSerialization = "1.9.0"
+retrofitKotlinxSerializationConverter = "0.8.0"
+room = "2.6.1"
+koin = "3.5.3"
+lifecycleRuntimeComposeAndroid = "2.8.0"
 
 
 [libraries]
@@ -32,9 +40,22 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 play-services-tagmanager-v4-impl = { group = "com.google.android.gms", name = "play-services-tagmanager-v4-impl", version.ref = "playServicesTagmanagerV4Impl" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+retrofitKotlinxSerializationConverter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxSerializationConverter" }
+roomKtx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+roomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+koinBom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
+koinAndroid = { group = "io.insert-koin", name = "koin-android" }
+koinAndroidxCompose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+androidx-lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+
 

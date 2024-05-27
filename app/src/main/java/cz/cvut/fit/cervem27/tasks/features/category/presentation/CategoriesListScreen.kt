@@ -1,6 +1,5 @@
 package cz.cvut.fit.cervem27.tasks.features.category.presentation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -39,11 +37,11 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.features.category.Category
-import cz.cvut.fit.cervem27.tasks.features.category.categories
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
+import cz.cvut.fit.cervem27.tasks.features.category.domain.categories
 
 @Composable
-fun MySvgImage(url: String, color: Color, modifier: Modifier = Modifier) {
+fun MySvgImage(url: String, modifier: Modifier = Modifier) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
@@ -51,7 +49,6 @@ fun MySvgImage(url: String, color: Color, modifier: Modifier = Modifier) {
             .build(),
         contentDescription = null,
         modifier = modifier
-            .background(color = color, shape = RoundedCornerShape(8.dp))
     )
 }
 
@@ -88,9 +85,9 @@ fun CategoriesListScreen(
 
 
 }
-@Preview
+
 @Composable
-fun CategoryCard(category: Category = Category("and", "url", Color(0xFFD15E5E))){
+fun CategoryCard(category: Category){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,9 +97,8 @@ fun CategoryCard(category: Category = Category("and", "url", Color(0xFFD15E5E)))
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            MySvgImage(url = category.image, category.color, modifier = Modifier
-                .size(60.dp)
-                .padding(8.dp))
+            CategoryIcon(icon = category.icon, modifier = Modifier.size(60.dp).padding(8.dp))
+
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = category.name)
             

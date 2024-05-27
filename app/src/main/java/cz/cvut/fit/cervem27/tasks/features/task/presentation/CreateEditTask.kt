@@ -4,7 +4,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
-import android.graphics.drawable.Icon
 import android.text.InputFilter
 import android.widget.GridLayout
 import android.widget.Space
@@ -214,9 +213,15 @@ fun SelectedCategory(){
         verticalAlignment = Alignment.CenterVertically,
 
     ) {
-        CategoryIcon(modifier = Modifier
+        CategoryIcon(
+            icon = cz.cvut.fit.cervem27.tasks.features.category.domain.Icon(
+                url = "https://api.iconify.design/mdi:injection-off.svg",
+                color = Color.Red
+            ),
+            modifier = Modifier
             .padding(8.dp)
-            .size(50.dp))
+            .size(50.dp)
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = "Category",
