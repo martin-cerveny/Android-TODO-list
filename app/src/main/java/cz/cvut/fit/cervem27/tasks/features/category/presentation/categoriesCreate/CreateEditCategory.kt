@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.category.presentation
+package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,7 +32,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +44,7 @@ import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import org.koin.androidx.compose.koinViewModel
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.MySvgImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,10 @@ fun CreateEditCategory(
                 title = {},
                 actions = {
                     Button(
-                        onClick = {navController.navigateUp()},
+                        onClick = {
+                            viewModel.onCreateCategory()
+                            navController.navigateUp()
+                          },
                         modifier = Modifier
                             .padding(8.dp)
 
@@ -138,6 +142,8 @@ fun SearchIconHeader(
             onValueChange = {
                 onIconSearchQueryChange(it)
             },
+            leadingIcon = {Icon(imageVector = Icons.Default.Search, contentDescription = null)},
+            placeholder = { Text(text = stringResource(R.string.search_icon))},
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
@@ -164,19 +170,14 @@ fun SearchIconResults(
         columns = GridCells.Fixed(6),
     ) {
         items(icons){icon ->
-//            Icon(
-//                imageVector = icon,
-//                contentDescription = null,
-//                modifier = Modifier.size(50.dp)
-//            )
-//            MySvgImage(url = icon.url, color = icon.color, modifier = Modifier.padding(8.dp))
-            CategoryIcon(
+           CategoryIcon(
                 icon,
                 modifier = Modifier
                     .size(50.dp)
                     .clickable(
-                        onClick = {onIconSelect(icon.url)}
-                    )
+                        onClick = { onIconSelect(icon.url) }
+                    ),
+               tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -198,8 +199,8 @@ fun ColorsPicker(
         for ((index, color) in colors.withIndex()) {
 
            Box(modifier = if(selected == index) Modifier
-                   .size(circleSize)
-                   .background(color = color.copy(alpha = 0.5f), shape = CircleShape)
+               .size(circleSize)
+               .background(color = color.copy(alpha = 0.5f), shape = CircleShape)
                  else Modifier.size(circleSize)
            ){
                Box(
@@ -207,7 +208,7 @@ fun ColorsPicker(
                        .padding(4.dp)
                        .clip(CircleShape)
                        .fillMaxSize()
-                       .clickable(onClick = {onClickColor(index)})
+                       .clickable(onClick = { onClickColor(index) })
                        .background(color = color)
 
                )
@@ -249,7 +250,8 @@ fun Header(
 @Composable
 fun CategoryIcon(
     icon: Icon,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    tint: Color = Color.Black
 ){
     Box(
         modifier = modifier
@@ -261,6 +263,7 @@ fun CategoryIcon(
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxSize(),
+            tint = tint
         )
 
     }

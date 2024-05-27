@@ -29,8 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIcon
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.MySvgImage
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryIcon
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import cz.cvut.fit.cervem27.tasks.features.task.domain.tasks
 
@@ -99,7 +98,7 @@ fun TaskDetails(task: Task){
         Modifier.padding(8.dp)
     ) {
         Row{
-            Text(text = task.category.name)
+            Text(text = task.category.categoryName)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = "5d")
         }

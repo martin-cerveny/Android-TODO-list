@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.category.presentation
+package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,14 +23,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
@@ -39,16 +42,19 @@ import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.domain.categories
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryIcon
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MySvgImage(url: String, modifier: Modifier = Modifier) {
+fun MySvgImage(url: String, modifier: Modifier = Modifier, tint: Color) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
             .decoderFactory(SvgDecoder.Factory())
             .build(),
         contentDescription = null,
-        modifier = modifier
+        modifier = modifier,
+        colorFilter = ColorFilter.tint(tint)
     )
 }
 
@@ -56,9 +62,11 @@ fun MySvgImage(url: String, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesListScreen(
+    viewModel: CategoriesListViewModel = koinViewModel(),
     navController: NavController
 ){
-               // MySvgImage(url = "https://api.iconify.design/mdi:injection-off.svg")
+    val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
+
         Scaffold(
             topBar = {
                 TopAppBar(title = { Text(text = stringResource(R.string.categories))})
@@ -77,7 +85,7 @@ fun CategoriesListScreen(
             LazyColumn(
                 modifier = Modifier.padding(padding)
             ) {
-                items(categories){ category ->
+                items(screenState.categories){ category ->
                     CategoryCard(category)
                 }
             }
@@ -97,10 +105,12 @@ fun CategoryCard(category: Category){
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            CategoryIcon(icon = category.icon, modifier = Modifier.size(60.dp).padding(8.dp))
+            CategoryIcon(icon = category.icon, modifier = Modifier
+                .size(60.dp)
+                .padding(8.dp))
 
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = category.name)
+            Text(text = category.categoryName)
             
           
         }

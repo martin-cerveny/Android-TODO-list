@@ -1,17 +1,14 @@
 package cz.cvut.fit.cervem27.tasks.core
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import cz.cvut.fit.cervem27.tasks.features.task.presentation.TasksListScreen
 import cz.cvut.fit.cervem27.tasks.features.task.presentation.CreateEditTask
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoriesListScreen
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.CreateEditCategory
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.CategoriesListScreen
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CreateEditCategory
 @Composable
 fun Navigation(
     navController: NavHostController,

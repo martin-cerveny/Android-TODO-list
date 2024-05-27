@@ -1,30 +1,36 @@
-package cz.cvut.fit.cervem27.tasks.features.category.presentation
+package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate
 
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CreateCategoryViewModel(private val createRepository: CategoryRepository) : ViewModel() {
+class CreateCategoryViewModel(
+    private val createRepository: CategoryRepository,
+) : ViewModel() {
     private val _categoryStateStream = MutableStateFlow(ScreenState())
     val categoryStateStream = _categoryStateStream.asStateFlow()
 
 
 
     fun onIconsSearchQueryChange(query: String){
+
+
+
         _categoryStateStream.update { it.copy(iconQuery = query) }
         if(query.length < 3){
             // todo enter at least 3 characters
         } else {
             viewModelScope.launch {
                 try {
-
+                  //  createRepository.getCategories()
                     _categoryStateStream.update {
                         it.copy(iconsResult = createRepository.searchIcons(query))
                     }
@@ -43,11 +49,25 @@ class CreateCategoryViewModel(private val createRepository: CategoryRepository) 
     }
 
     fun onClickColor(colorIndex: Int){
+
         _categoryStateStream.update {
             it.copy(selectedColorIndex = colorIndex)
         }
         _categoryStateStream.update {
             it.copy(selectedIcon = Icon(url = it.selectedIcon.url,color = it.selectedColor() ))
+        }
+
+    }
+
+    fun onCreateCategory(){
+        viewModelScope.launch {
+            createRepository.insertCategories(listOf(
+                Category(
+                    categoryId = 0,
+                    categoryName = categoryStateStream.value.categoryName,
+                    icon = categoryStateStream.value.selectedIcon,
+                )
+            ))
         }
 
     }
