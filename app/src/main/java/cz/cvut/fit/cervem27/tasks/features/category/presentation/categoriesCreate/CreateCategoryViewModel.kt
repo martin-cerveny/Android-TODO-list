@@ -1,12 +1,13 @@
 package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate
 
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
+import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -54,7 +55,7 @@ class CreateCategoryViewModel(
             it.copy(selectedColorIndex = colorIndex)
         }
         _categoryStateStream.update {
-            it.copy(selectedIcon = Icon(url = it.selectedIcon.url,color = it.selectedColor() ))
+            it.copy(selectedCategoryIcon = CategoryIcon(url = it.selectedCategoryIcon.url,color = it.selectedColor() ))
         }
 
     }
@@ -65,7 +66,7 @@ class CreateCategoryViewModel(
                 Category(
                     categoryId = 0,
                     categoryName = categoryStateStream.value.categoryName,
-                    icon = categoryStateStream.value.selectedIcon,
+                    categoryIcon = categoryStateStream.value.selectedCategoryIcon,
                 )
             ))
         }
@@ -74,7 +75,7 @@ class CreateCategoryViewModel(
 
     fun onIconChange(iconUrl: String){
         _categoryStateStream.update {
-            it.copy(selectedIcon = Icon(url = iconUrl, color = it.selectedColor()))
+            it.copy(selectedCategoryIcon = CategoryIcon(url = iconUrl, color = it.selectedColor()))
         }
     }
     fun clearCategoryName(){
@@ -101,9 +102,9 @@ data class ScreenState(
         Color(0xFFE1D5F2),
         ),
     val selectedColorIndex: Int  = 0,
-    val selectedIcon: Icon = Icon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFFD9854)),
+    val selectedCategoryIcon: CategoryIcon = CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFFD9854)),
     val iconQuery: String = "",
-    val iconsResult: List<Icon> = emptyList()
+    val iconsResult: List<CategoryIcon> = emptyList()
 ){
     fun selectedColor() = colors[selectedColorIndex]
 }

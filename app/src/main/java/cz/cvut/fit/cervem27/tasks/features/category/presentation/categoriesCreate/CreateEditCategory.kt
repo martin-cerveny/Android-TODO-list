@@ -43,7 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import org.koin.androidx.compose.koinViewModel
-import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
+import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.MySvgImage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +103,7 @@ fun CreateEditCategory(
             .padding(8.dp)) {
             Header(
                 categoryName = screenState.categoryName,
-                icon = screenState.selectedIcon,
+                categoryIcon = screenState.selectedCategoryIcon,
                 onCategoryNameChange = viewModel::onCategoryNameChange
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -159,7 +159,7 @@ fun SearchIconHeader(
 
 @Composable
 fun SearchIconResults(
-    icons: List<Icon>,
+    categoryIcons: List<CategoryIcon>,
     modifier: Modifier = Modifier,
     onIconSelect: (String) -> Unit
 ){
@@ -169,15 +169,19 @@ fun SearchIconResults(
         modifier = modifier,
         columns = GridCells.Fixed(6),
     ) {
-        items(icons){icon ->
-           CategoryIcon(
-                icon,
+        items(categoryIcons){ icon ->
+            MySvgImage(
+                url = icon.url,
                 modifier = Modifier
+                    .padding(8.dp)
                     .size(50.dp)
                     .clickable(
-                        onClick = { onIconSelect(icon.url) }
-                    ),
-               tint = MaterialTheme.colorScheme.onBackground
+                        onClick = {
+                            onIconSelect(icon.url)
+                        }
+                    )
+                ,
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
     }
@@ -220,17 +224,14 @@ fun ColorsPicker(
 @Composable
 fun Header(
     categoryName: String,
-    icon: Icon,
+    categoryIcon: CategoryIcon,
     onCategoryNameChange: (String) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CategoryIcon(
-            icon,
-            modifier = Modifier
-                .padding(top = 7.dp)
-                .size(50.dp)
+        CategoryImage(
+            categoryIcon
         )
         Spacer(modifier = Modifier.width(10.dp))
         OutlinedTextField(
@@ -248,18 +249,19 @@ fun Header(
 
 
 @Composable
-fun CategoryIcon(
-    icon: Icon,
-    modifier: Modifier = Modifier,
+fun CategoryImage(
+    categoryIcon: CategoryIcon,
     tint: Color = Color.Black
 ){
     Box(
-        modifier = modifier
-            .background(color = icon.color, shape = RoundedCornerShape(14.dp))
+        modifier = Modifier
+            .padding(8.dp)
+            .size(50.dp)
+            .background(color = categoryIcon.color, shape = RoundedCornerShape(14.dp))
 
     ) {
         MySvgImage(
-            url = icon.url,
+            url = categoryIcon.url,
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxSize(),

@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,8 +40,7 @@ import coil.request.ImageRequest
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.categories
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryIcon
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -105,9 +103,7 @@ fun CategoryCard(category: Category, modifier: Modifier = Modifier){
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            CategoryIcon(icon = category.icon, modifier = Modifier
-                .size(60.dp)
-                .padding(8.dp))
+            CategoryImage(categoryIcon = category.categoryIcon)
 
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = category.categoryName)

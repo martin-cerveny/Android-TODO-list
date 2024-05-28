@@ -31,9 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryIcon
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
-import cz.cvut.fit.cervem27.tasks.features.task.domain.tasks
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -83,11 +82,8 @@ fun TaskCard(task: Task){
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            CategoryIcon(
-               task.category.icon,
-                modifier = Modifier
-                    .size(60.dp)
-                    .padding(8.dp)
+            CategoryImage(
+               task.category.categoryIcon
             )
             TaskDetails(task)
 

@@ -1,12 +1,7 @@
 package cz.cvut.fit.cervem27.tasks.features.task.data.db
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import cz.cvut.fit.cervem27.tasks.core.data.db.TasksDao
-import cz.cvut.fit.cervem27.tasks.features.category.data.db.DbCategory
 import cz.cvut.fit.cervem27.tasks.features.category.data.db.toDomain
-import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import cz.cvut.fit.cervem27.tasks.core.data.db.TasksDao
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
+import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -22,8 +22,8 @@ class CategoryLocalDataSource(private val tasksDao: TasksDao) {
             DbCategory(
                 categoryId = category.categoryId,
                 categoryName = category.categoryName,
-                iconUrl = category.icon.url,
-                iconColor = category.icon.color.toArgb()
+                iconUrl = category.categoryIcon.url,
+                iconColor = category.categoryIcon.color.toArgb()
             )
         })
     }
@@ -35,6 +35,6 @@ fun DbCategory.toDomain(): Category {
     return Category(
         categoryId = categoryId,
         categoryName = categoryName,
-        icon = Icon(url = iconUrl, color = Color(iconColor))
+        categoryIcon = CategoryIcon(url = iconUrl, color = Color(iconColor))
     )
 }
