@@ -10,7 +10,7 @@ data class Task (
     val taskId: Long,
     val name: String,
     val category: Category,
-    val date: Date,
+    val date: Date?,
     val subtasks: List<Subtask>
 
 ){

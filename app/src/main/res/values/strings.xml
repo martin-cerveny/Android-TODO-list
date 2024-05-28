@@ -5,4 +5,5 @@
     <string name="tasks">Tasks</string>
     <string name="categories">Categories</string>
     <string name="search_icon">Search Icon...</string>
+    <string name="d">%1$s d</string>
 </resources>

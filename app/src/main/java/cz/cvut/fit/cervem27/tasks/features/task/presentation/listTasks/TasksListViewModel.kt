@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Date
 
 class TasksListViewModel(
@@ -16,6 +17,14 @@ class TasksListViewModel(
 
     private val _stateStream = MutableStateFlow(TaskListScreenState())
     val stateStream = _stateStream.asStateFlow()
+
+    private val calendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+    val today = calendar.timeInMillis
 
     init {
         viewModelScope.launch {

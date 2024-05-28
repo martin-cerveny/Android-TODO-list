@@ -1,5 +1,6 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,12 +29,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,6 +49,7 @@ fun TasksListScreen(
     navController: NavController
 ){
     val screenState by viewModel.stateStream.collectAsStateWithLifecycle()
+    val today: Long = viewModel.today
 
     Scaffold(
         topBar = {
@@ -63,7 +70,7 @@ fun TasksListScreen(
             modifier = Modifier.padding(padding)
         ) {
             items(screenState.tasks){ task ->
-                TaskCard(task)
+                TaskCard(task = task, today = today)
             }
         }
     }
@@ -72,7 +79,7 @@ fun TasksListScreen(
 }
 
 @Composable
-fun TaskCard(task: Task){
+fun TaskCard(task: Task, today: Long){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,7 +92,10 @@ fun TaskCard(task: Task){
             CategoryImage(
                task.category.categoryIcon
             )
-            TaskDetails(task)
+            TaskDetails(
+                task = task,
+                today = today
+            )
 
 
         }
@@ -95,14 +105,20 @@ fun TaskCard(task: Task){
 }
 
 @Composable
-fun TaskDetails(task: Task){
+fun TaskDetails(task: Task, today: Long){
     Column(
         Modifier.padding(8.dp)
     ) {
         Row{
             Text(text = task.category.categoryName)
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "5d")
+            Log.d("today", "${task.date?.time?:0 - today}")
+            task.date?.let{date ->
+                Text(text = stringResource(
+                    R.string.d,
+                    TimeUnit.MILLISECONDS.toDays(date.time - today)
+                ))
+            }
         }
         Text(
             text = task.name,

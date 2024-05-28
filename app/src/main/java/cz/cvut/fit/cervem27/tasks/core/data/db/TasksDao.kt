@@ -22,7 +22,7 @@ interface TasksDao {
     @Insert
     suspend fun insertTask(task: DbTask)
     @Transaction
-    @Query("SELECT * FROM tasks")
-    fun getAllTasksWithCategoriesStream(): Flow<List<DbTaskWithCategory>>
+    @Query("SELECT * FROM tasks ORDER BY deadline")
+    fun getAllTasksWithCategoriesOrderedStream(): Flow<List<DbTaskWithCategory>>
 
 }

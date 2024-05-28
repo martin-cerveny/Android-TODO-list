@@ -60,7 +60,7 @@ class CreateTaskViewModel(
                         0,
                         stateStream.value.taskName,
                         category = category,
-                        Date(242423),
+                        date = stateStream.value.date,
                         emptyList()
                     )
                 )

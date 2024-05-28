@@ -5,11 +5,10 @@ import cz.cvut.fit.cervem27.tasks.features.category.data.db.toDomain
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.Date
 
 class TaskLocalDataSource(private val tasksDao: TasksDao) {
 
-    fun getTasks(): Flow<List<Task>> = tasksDao.getAllTasksWithCategoriesStream().map { dbTaskWithCategory ->
+    fun getTasks(): Flow<List<Task>> = tasksDao.getAllTasksWithCategoriesOrderedStream().map { dbTaskWithCategory ->
         dbTaskWithCategory.map { it.toDomain() }
     }
 
@@ -19,7 +18,8 @@ class TaskLocalDataSource(private val tasksDao: TasksDao) {
             DbTask(
                 taskId = task.taskId,
                 categoryId = task.category.categoryId,
-                taskName = task.name
+                taskName = task.name,
+                deadline = task.date
             )
         )
     }
@@ -30,7 +30,7 @@ class TaskLocalDataSource(private val tasksDao: TasksDao) {
             taskId = task.taskId,
             name = task.taskName,
             category = category.toDomain(),
-            date = Date(1987),
+            date = task.deadline,
             subtasks = emptyList()
         )
     }
