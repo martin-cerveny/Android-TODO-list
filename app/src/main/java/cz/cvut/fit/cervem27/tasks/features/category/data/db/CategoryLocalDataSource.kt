@@ -18,9 +18,9 @@ class CategoryLocalDataSource(private val tasksDao: TasksDao) {
 
     suspend fun insert(categories: List<Category>) {
 
-        tasksDao.insert(categories.map { category ->
+        tasksDao.insertCategory(categories.map { category ->
             DbCategory(
-                id = category.categoryId,
+                categoryId = category.categoryId,
                 categoryName = category.categoryName,
                 iconUrl = category.icon.url,
                 iconColor = category.icon.color.toArgb()
@@ -29,11 +29,12 @@ class CategoryLocalDataSource(private val tasksDao: TasksDao) {
     }
 
 
-    private fun DbCategory.toDomain(): Category {
-        return Category(
-            categoryId = id,
-            categoryName = categoryName,
-            icon = Icon(url = iconUrl, color = Color(iconColor))
-        )
-    }
+
+}
+fun DbCategory.toDomain(): Category {
+    return Category(
+        categoryId = categoryId,
+        categoryName = categoryName,
+        icon = Icon(url = iconUrl, color = Color(iconColor))
+    )
 }

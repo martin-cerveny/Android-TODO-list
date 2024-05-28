@@ -1,13 +1,18 @@
-package cz.cvut.fit.cervem27.tasks.features.task.presentation
+package cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,50 +38,57 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryIcon
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.CategoryCard
+import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun CreateEditTask(
+    viewModel: CreateTaskViewModel = koinViewModel(),
     navController: NavController
 ){
-    Scaffold(
-        modifier = Modifier,
-        topBar = {
-            TopAppBar(
-                title = {
-                    SelectedCategory()
-                    DropDown()
-                },
-                actions = {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = null,
-                        modifier = Modifier.size(30.dp),
-                        tint = Color.White
-                    )
-                }
-                
-            )
-        },
-        bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
+    val screenState by viewModel.stateStream.collectAsStateWithLifecycle()
+
+    Column(
+
     ) {
-        Column(
-            modifier = Modifier.padding(it)
-        ) {
-            Spacer(modifier = Modifier.height(20.dp))
-            TaskEntry()
-            Date()
-            Spacer(modifier = Modifier.weight(1f))
-            ConfirmButtons(
-                onCreateClick = {navController.navigateUp()},
-                onCancelClick = {navController.navigateUp()}
-            )
-        }
+
+        ConfirmButtons(
+            onCreateClick = {
+                viewModel.addTask()
+                navController.navigateUp()
+
+            },
+            onCancelClick = {navController.navigateUp()}
+        )
+        TaskEntry(
+            screenState.taskName,
+            viewModel::onTaskNameChange
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+
+
+
+        Date(onDismiss = viewModel::hideCalendar)
+//        Spacer(modifier = Modifier.weight(1f))
+
+
+        SelectedCategory(onSelectCategoryClick = viewModel::onSelectCategory)
+        DropDown(
+            expanded = screenState.categoriesSelectExpanded,
+            onSelectCategory = viewModel::onSelectedCategory
+        )
+
     }
+
 }
 
 @Composable
@@ -97,7 +110,7 @@ fun ConfirmButtons(onCreateClick: () -> Unit, onCancelClick: () -> Unit){
         }
 
         Button(
-            onClick = {onCancelClick()},
+            onClick = {onCreateClick()},
             modifier = Modifier
                 .padding(8.dp)
 
@@ -109,21 +122,24 @@ fun ConfirmButtons(onCreateClick: () -> Unit, onCancelClick: () -> Unit){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropDown(){
+fun DropDown(
+    expanded: Boolean,
+    onSelectCategory: (String) -> Unit
+){
+
+
     DropdownMenu(
-        expanded = false,
+        expanded = expanded,
         onDismissRequest = { /*TODO*/ },
         offset = DpOffset(0.dp, 0.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            .padding(16.dp)
+            .fillMaxSize()
+            .background(Color(0xFF212121), shape = RoundedCornerShape(16.dp))
     ) {
-        DropdownMenuItem(text = { Text(text = "item1") }, onClick = { /*TODO*/ })
-        DropdownMenuItem(text = { Text(text = "item1") }, onClick = { /*TODO*/ })
-        DropdownMenuItem(text = { Text(text = "item1") }, onClick = { /*TODO*/ })
-        DropdownMenuItem(text = { Text(text = "item1") }, onClick = { /*TODO*/ })
-        DropdownMenuItem(text = { Text(text = "item1") }, onClick = { /*TODO*/ })
-        DropdownMenuItem(text = { Text(text = "item1") }, onClick = { /*TODO*/ })
-
+        for(item in listOf("item1", )){
+            DropdownMenuItem(text = { Text(text = item) }, onClick = { onSelectCategory(item) })
+        }
 
     }
 
@@ -131,20 +147,17 @@ fun DropDown(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Date(){
+fun Date(onDismiss: ()->Unit){
     val dateState = rememberDatePickerState()
-    DatePicker(
-        state = dateState,
-        title = {},
-        headline = {
-            Text(
-                text = "Deadline ${formattedDate(dateState.selectedDateMillis)}",
-                fontSize = 20.sp,
-                modifier = Modifier.padding(16.dp)
-            )
-       },
-        showModeToggle = false
-    )
+//    Popup(
+//        onDismissRequest = onDismiss
+//    ) {
+//        DatePicker(
+//            state = dateState,
+//            title = {},
+//            showModeToggle = true,
+//        )
+//    }
 }
 
 fun formattedDate(dateMillis: Long?): String {
@@ -157,11 +170,14 @@ fun formattedDate(dateMillis: Long?): String {
 }
 
 @Composable
-fun TaskEntry(){
+fun TaskEntry(
+    taskName: String,
+    onTaskNameChange: (String) -> Unit
+){
     OutlinedTextField(
-        value = "Task",
+        value = taskName,
         label = { Text(text= stringResource(R.string.task)) },
-        onValueChange = {},
+        onValueChange = {onTaskNameChange(it)},
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .padding(8.dp)
@@ -170,20 +186,28 @@ fun TaskEntry(){
 }
 
 @Composable
-fun SelectedCategory(){
+fun SelectedCategory(
+    onSelectCategoryClick: () -> Unit
+){
+
+
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.clickable(
+            onClick = onSelectCategoryClick
+        )
+
 
     ) {
         CategoryIcon(
             icon = cz.cvut.fit.cervem27.tasks.features.category.domain.Icon(
                 url = "https://api.iconify.design/mdi:injection-off.svg",
-                color = Color.Red
+                color = Color(0xFFFF9800)
             ),
             modifier = Modifier
-            .padding(8.dp)
-            .size(50.dp)
+                .padding(8.dp)
+                .size(50.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(

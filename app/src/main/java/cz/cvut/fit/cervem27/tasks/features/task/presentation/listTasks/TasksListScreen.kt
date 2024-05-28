@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.task.presentation
+package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,25 +20,31 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryIcon
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import cz.cvut.fit.cervem27.tasks.features.task.domain.tasks
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksListScreen(
+    viewModel: TasksListViewModel = koinViewModel(),
     navController: NavController
 ){
+    val screenState by viewModel.stateStream.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = stringResource(R.string.tasks)) })
@@ -57,7 +63,7 @@ fun TasksListScreen(
         LazyColumn(
             modifier = Modifier.padding(padding)
         ) {
-            items(tasks){ task ->
+            items(screenState.tasks){ task ->
                 TaskCard(task)
             }
         }

@@ -7,7 +7,7 @@ import java.util.Date
 
 @Entity(tableName = "categories")
 data class DbCategory(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val categoryId: Long,
     val categoryName: String,
     val iconUrl: String,
     val iconColor: Int // todo convertor

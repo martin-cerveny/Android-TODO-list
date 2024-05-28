@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import cz.cvut.fit.cervem27.tasks.features.task.presentation.TasksListScreen
-import cz.cvut.fit.cervem27.tasks.features.task.presentation.CreateEditTask
+import cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks.TasksListScreen
+import cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask.CreateEditTask
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.CategoriesListScreen
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CreateEditCategory
 @Composable

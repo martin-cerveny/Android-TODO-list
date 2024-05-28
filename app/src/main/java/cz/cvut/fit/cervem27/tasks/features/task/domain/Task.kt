@@ -3,11 +3,11 @@ package cz.cvut.fit.cervem27.tasks.features.task.domain
 import androidx.compose.ui.graphics.Color
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Icon
-import java.sql.Date
+import java.util.Date
 
 
 data class Task (
-    val id: Long,
+    val taskId: Long,
     val name: String,
     val category: Category,
     val date: Date,
@@ -15,7 +15,7 @@ data class Task (
 
 ){
     data class Subtask(
-        val id: Long,
+        val subtaskId: Long,
         val title: String,
         val completed: Boolean,
     )

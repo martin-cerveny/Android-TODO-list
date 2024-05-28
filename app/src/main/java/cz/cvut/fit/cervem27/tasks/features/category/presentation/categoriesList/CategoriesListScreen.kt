@@ -67,37 +67,37 @@ fun CategoriesListScreen(
 ){
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
 
-        Scaffold(
-            topBar = {
-                TopAppBar(title = { Text(text = stringResource(R.string.categories))})
-            },
-            bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.navigate(Screen.CategoriesCreateScreen.route) },
-                    containerColor = Color(0xFF0591FF),
-                    contentColor = Color.Black
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                }
-            }
-        ) { padding ->
-            LazyColumn(
-                modifier = Modifier.padding(padding)
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(text = stringResource(R.string.categories))})
+        },
+        bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(Screen.CategoriesCreateScreen.route) },
+                containerColor = Color(0xFF0591FF),
+                contentColor = Color.Black
             ) {
-                items(screenState.categories){ category ->
-                    CategoryCard(category)
-                }
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.padding(padding)
+        ) {
+            items(screenState.categories){ category ->
+                CategoryCard(category)
+            }
+        }
+    }
 
 
 }
 
 @Composable
-fun CategoryCard(category: Category){
+fun CategoryCard(category: Category, modifier: Modifier = Modifier){
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
 
