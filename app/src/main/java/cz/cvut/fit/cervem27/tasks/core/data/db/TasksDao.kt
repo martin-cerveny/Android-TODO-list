@@ -1,6 +1,7 @@
 package cz.cvut.fit.cervem27.tasks.core.data.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
@@ -18,6 +19,9 @@ interface TasksDao {
 
     @Insert
     suspend fun insertCategory(categories: List<DbCategory>)
+
+    @Delete
+    suspend fun deleteTask(task: DbTask)
 
     @Insert
     suspend fun insertTask(task: DbTask)

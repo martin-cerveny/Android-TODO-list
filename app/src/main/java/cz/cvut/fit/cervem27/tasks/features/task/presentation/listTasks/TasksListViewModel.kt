@@ -33,6 +33,12 @@ class TasksListViewModel(
             }
         }
     }
+
+    fun delete(task: Task){
+        viewModelScope.launch {
+            taskRepository.deleteTask(task = task)
+        }
+    }
 }
 data class TaskListScreenState(
     val tasks: List<Task> = emptyList()

@@ -15,16 +15,21 @@ class TaskLocalDataSource(private val tasksDao: TasksDao) {
     suspend fun insert(task: Task) {
 
         tasksDao.insertTask(
-            DbTask(
-                taskId = task.taskId,
-                categoryId = task.category.categoryId,
-                taskName = task.name,
-                deadline = task.date
-            )
+           task.toDbTask()
         )
     }
+    suspend fun delete(task: Task) = tasksDao.deleteTask(
+        task.toDbTask()
+    )
 
-
+    private fun Task.toDbTask(): DbTask{
+        return  DbTask(
+            taskId = taskId,
+            categoryId = category.categoryId,
+            taskName = name,
+            deadline = date
+        )
+    }
     private fun DbTaskWithCategory.toDomain(): Task {
         return Task(
             taskId = task.taskId,

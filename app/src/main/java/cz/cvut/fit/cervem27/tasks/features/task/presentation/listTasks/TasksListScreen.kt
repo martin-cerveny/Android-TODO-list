@@ -2,12 +2,12 @@ package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -25,20 +25,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
+import cz.cvut.fit.cervem27.tasks.core.SwipeToDismissContainer
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import org.koin.androidx.compose.koinViewModel
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
-import java.util.Date
 import java.util.concurrent.TimeUnit
 
 
@@ -67,11 +65,24 @@ fun TasksListScreen(
         }
     ) { padding ->
         LazyColumn(
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            contentPadding = PaddingValues(vertical = 10.dp)
         ) {
-            items(screenState.tasks){ task ->
-                TaskCard(task = task, today = today)
+            items(
+                items = screenState.tasks,
+                key = { it.taskId }
+            ) { task ->
+                SwipeToDismissContainer(
+                    item = task,
+                    onDelete = viewModel::delete,
+                    painter = painterResource(id = R.drawable.icon_park_outline__check_one),
+                    backgroundColor = Color(0xFF4CAF50),
+                    padding = PaddingValues(vertical = 10.dp)
+                ){
+                    TaskCard(task = task, today = today)
+                }
             }
+
         }
     }
 
@@ -83,7 +94,7 @@ fun TaskCard(task: Task, today: Long){
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .padding(horizontal = 16.dp)
 
     ){
         Row(
@@ -128,3 +139,4 @@ fun TaskDetails(task: Task, today: Long){
         )
     }
 }
+

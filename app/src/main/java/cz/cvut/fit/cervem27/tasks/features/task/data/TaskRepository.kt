@@ -15,4 +15,5 @@ class TaskRepository(
 
     suspend fun insertTask(task: Task) = taskLocalDataSource.insert(task)
 
+    suspend fun deleteTask(task: Task) = taskLocalDataSource.delete(task)
 }
