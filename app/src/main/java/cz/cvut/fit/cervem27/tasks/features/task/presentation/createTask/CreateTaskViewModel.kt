@@ -1,8 +1,11 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.data.db.CategoryLocalDataSource
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
@@ -18,8 +21,12 @@ import java.util.Date
 
 class CreateTaskViewModel(
     private val taskRepository: TaskRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val id: Long?
+        get() = savedStateHandle[Screen.TasksEditScreen.ID_KEY]
 
     private val _stateStream = MutableStateFlow(CreateTaskScreenState())
     val stateStream = _stateStream.asStateFlow()
@@ -31,6 +38,20 @@ class CreateTaskViewModel(
         set(Calendar.MILLISECOND, 0)
     }
     init {
+
+
+        viewModelScope.launch {
+            id?.let { taskId ->
+                val task = taskRepository.getTask(taskId)
+                _stateStream.update {
+                    it.copy(
+                        taskName = task.name,
+                        category = task.category,
+                        date = task.date
+                    )
+                }
+            }
+        }
         viewModelScope.launch {
             categoryRepository.getCategories().collect{ categories ->
                 _stateStream.update { it.copy(categories = categories) }
@@ -55,15 +76,20 @@ class CreateTaskViewModel(
     fun addTask() {//task: Task){
         stateStream.value.category?.let {category ->
             viewModelScope.launch {
-                taskRepository.insertTask(
-                    Task(
-                        0,
-                        stateStream.value.taskName,
-                        category = category,
-                        date = stateStream.value.date,
-                        emptyList()
-                    )
+                val task = Task(
+                    taskId = id?:0,
+                    name = stateStream.value.taskName,
+                    category = category,
+                    date = stateStream.value.date,
+                    subtasks = emptyList()
                 )
+                id?.let {
+                    taskRepository.updateTask(task)
+                }?:run {
+                    taskRepository.insertTask(task)
+                }
+
+
             }
         }
     }
@@ -109,7 +135,6 @@ data class CreateTaskScreenState(
     val date: Date? = null,
     val dateSelectExpanded: Boolean = false,
     val categories: List<Category> = emptyList(),
-    val subtasks: List<Task.Subtask> = emptyList(),
 
 
 )

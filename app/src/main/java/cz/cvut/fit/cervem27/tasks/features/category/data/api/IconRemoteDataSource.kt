@@ -11,7 +11,7 @@ class IconRemoteDataSource (private val apiDescription: IconsApiDescription){
             Log.d("icons:", icon)
             CategoryIcon(
                 url = ApiConstants.BASE_URL + icon + ".svg",
-                color = Color.Transparent
+                colorHue = 0f
             )
         }
     }

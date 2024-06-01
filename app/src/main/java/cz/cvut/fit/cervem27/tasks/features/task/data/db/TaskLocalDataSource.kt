@@ -1,7 +1,9 @@
 package cz.cvut.fit.cervem27.tasks.features.task.data.db
 
+import android.database.sqlite.SQLiteConstraintException
 import cz.cvut.fit.cervem27.tasks.core.data.db.TasksDao
 import cz.cvut.fit.cervem27.tasks.features.category.data.db.toDomain
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -12,15 +14,22 @@ class TaskLocalDataSource(private val tasksDao: TasksDao) {
         dbTaskWithCategory.map { it.toDomain() }
     }
 
+    suspend fun getTask(id: Long) = tasksDao.getTask(id).toDomain()
+
     suspend fun insert(task: Task) {
 
         tasksDao.insertTask(
            task.toDbTask()
         )
     }
-    suspend fun delete(task: Task) = tasksDao.deleteTask(
-        task.toDbTask()
-    )
+    suspend fun delete(task: Task): Boolean {
+        return try {
+            tasksDao.deleteTask(task.toDbTask())
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     private fun Task.toDbTask(): DbTask{
         return  DbTask(
@@ -38,5 +47,10 @@ class TaskLocalDataSource(private val tasksDao: TasksDao) {
             date = task.deadline,
             subtasks = emptyList()
         )
+    }
+
+
+    suspend fun update(task: Task) {
+        tasksDao.updateTask(task.toDbTask())
     }
 }

@@ -11,9 +11,10 @@ class TaskRepository(
 
     fun getTasks() = taskLocalDataSource.getTasks()
 
-
+    suspend fun getTask(id: Long) = taskLocalDataSource.getTask(id)
 
     suspend fun insertTask(task: Task) = taskLocalDataSource.insert(task)
 
-    suspend fun deleteTask(task: Task) = taskLocalDataSource.delete(task)
+    suspend fun deleteTask(task: Task): Boolean = taskLocalDataSource.delete(task)
+    suspend fun updateTask(task: Task) = taskLocalDataSource.update(task)
 }

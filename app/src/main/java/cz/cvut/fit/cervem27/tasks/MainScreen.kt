@@ -10,9 +10,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -28,13 +32,18 @@ import cz.cvut.fit.cervem27.tasks.core.Screen
 
 @Composable
 fun MainScreen() {
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val navController = rememberNavController()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentEntryRoute = currentEntry?.destination?.route
     val shouldShowBottomNavigation = currentEntryRoute?.let(::hasBottomNavigation) ?: false
 
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             if (shouldShowBottomNavigation) {
                 BottomAppBar {
@@ -73,7 +82,11 @@ fun MainScreen() {
         }
     ) { innerPadding ->
 
-        Navigation(navController = navController, modifier = Modifier.padding(innerPadding))
+        Navigation(
+            navController = navController,
+            snackbarHostState = snackbarHostState,
+            modifier = Modifier.padding(innerPadding)
+        )
     }
 }
 

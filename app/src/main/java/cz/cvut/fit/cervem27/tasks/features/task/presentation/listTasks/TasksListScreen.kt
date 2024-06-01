@@ -1,6 +1,13 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
 import android.util.Log
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,10 +25,16 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,18 +49,22 @@ import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.core.SwipeToDismissContainer
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.TimeUnit
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TasksListScreen(
     viewModel: TasksListViewModel = koinViewModel(),
+    snackbarHostState: SnackbarHostState,
     navController: NavController
 ){
     val screenState by viewModel.stateStream.collectAsStateWithLifecycle()
     val today: Long = viewModel.today
+    val scope = rememberCoroutineScope()
+
 
     Scaffold(
         topBar = {
@@ -65,22 +82,58 @@ fun TasksListScreen(
         }
     ) { padding ->
         LazyColumn(
-            modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(vertical = 10.dp)
-        ) {
+            modifier = Modifier
+                .padding(padding)
+       ) {
             items(
                 items = screenState.tasks,
                 key = { it.taskId }
             ) { task ->
-                SwipeToDismissContainer(
-                    item = task,
-                    onDelete = viewModel::delete,
-                    painter = painterResource(id = R.drawable.icon_park_outline__check_one),
-                    backgroundColor = Color(0xFF4CAF50),
-                    padding = PaddingValues(vertical = 10.dp)
-                ){
-                    TaskCard(task = task, today = today)
+
+                Box(
+                    modifier = Modifier.animateItemPlacement()
+                ) {
+                    SwipeToDismissContainer(
+                        item = task,
+                        onDelete = { task ->
+                            viewModel.delete(task)
+                            scope.launch {
+                                val result = snackbarHostState
+                                    .showSnackbar(
+                                        message = "Task deleted.",
+                                        actionLabel = "Undo",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                when (result) {
+                                    SnackbarResult.ActionPerformed -> {
+                                        viewModel.undoDelete(task)
+                                    }
+
+                                    SnackbarResult.Dismissed -> {
+                                        /* Handle snackbar dismissed */
+                                    }
+                                }
+                            }
+
+                        },
+                        painter = painterResource(id = R.drawable.icon_park_outline__check_one),
+                        backgroundColor = Color(0xFF4CAF50),
+                        padding = PaddingValues(vertical = 10.dp)
+                    ) {
+                        TaskCard(
+                            task = task,
+                            today = today,
+                            modifier = Modifier
+                                .combinedClickable(
+                                    onClick = {},
+                                    onLongClick = {
+                                        navController.navigate(Screen.TasksEditScreen.route + "/${task.taskId}")
+                                    }
+                                )
+                        )
+                    }
                 }
+
             }
 
         }
@@ -90,9 +143,9 @@ fun TasksListScreen(
 }
 
 @Composable
-fun TaskCard(task: Task, today: Long){
+fun TaskCard(task: Task, today: Long, modifier: Modifier = Modifier){
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
 

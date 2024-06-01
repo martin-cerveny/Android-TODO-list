@@ -7,20 +7,3 @@ data class Category (
     val categoryName: String,
     val categoryIcon: CategoryIcon
 )
-
-val categories = listOf(
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-    Category(1,"AND", CategoryIcon("https://api.iconify.design/mdi:injection-off.svg", Color(0xFFD15E5E))),
-
-    )

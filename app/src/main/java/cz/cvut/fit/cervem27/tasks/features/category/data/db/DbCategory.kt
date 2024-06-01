@@ -9,7 +9,6 @@ import java.util.Date
 data class DbCategory(
     @PrimaryKey(autoGenerate = true) val categoryId: Long,
     val categoryName: String,
-    val iconUrl: String,
-    val iconColor: Int // todo convertor
-
+    val iconUrl: String?,
+    val iconHue: Float
 )

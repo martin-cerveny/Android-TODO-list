@@ -3,8 +3,10 @@ package cz.cvut.fit.cervem27.tasks.core.data.db
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import cz.cvut.fit.cervem27.tasks.features.category.data.db.DbCategory
 import cz.cvut.fit.cervem27.tasks.features.task.data.db.DbTask
 import cz.cvut.fit.cervem27.tasks.features.task.data.db.DbTaskWithCategory
@@ -18,15 +20,26 @@ interface TasksDao {
     fun getCategoriesStream(): Flow<List<DbCategory>>
 
     @Insert
-    suspend fun insertCategory(categories: List<DbCategory>)
+    suspend fun insertCategory(categories: DbCategory)
 
+    @Update
+    suspend fun updateCategory(character: DbCategory)
+    @Delete
+    suspend fun deleteCategory(task: DbCategory)
+
+    @Query("SELECT * FROM categories WHERE categoryId = :id")
+    suspend fun getCategory(id: Long): DbCategory
+
+    @Query("SELECT * FROM tasks WHERE taskId = :id")
+    suspend fun getTask(id: Long): DbTaskWithCategory
     @Delete
     suspend fun deleteTask(task: DbTask)
-
     @Insert
     suspend fun insertTask(task: DbTask)
     @Transaction
     @Query("SELECT * FROM tasks ORDER BY deadline")
     fun getAllTasksWithCategoriesOrderedStream(): Flow<List<DbTaskWithCategory>>
+    @Update
+    suspend fun updateTask(toDbTask: DbTask)
 
 }

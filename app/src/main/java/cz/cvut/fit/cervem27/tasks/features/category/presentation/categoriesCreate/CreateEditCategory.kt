@@ -2,7 +2,6 @@ package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCrea
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -60,7 +61,7 @@ fun CreateEditCategory(
                 actions = {
                     Button(
                         onClick = {
-                            viewModel.onCreateCategory()
+                            viewModel.onConfirm()
                             navController.navigateUp()
                           },
                         modifier = Modifier
@@ -102,12 +103,16 @@ fun CreateEditCategory(
             .padding(it)
             .padding(8.dp)) {
             Header(
-                categoryName = screenState.categoryName,
-                categoryIcon = screenState.selectedCategoryIcon,
+                categoryName = screenState.name,
+                imageUrl = screenState.categoryUrl,
+                colorHue = screenState.selectedHue,
                 onCategoryNameChange = viewModel::onCategoryNameChange
             )
             Spacer(modifier = Modifier.height(20.dp))
-            ColorsPicker(screenState.colors, screenState.selectedColorIndex, viewModel::onClickColor)
+            ColorsPicker(
+                selectedHue = screenState.selectedHue,
+                viewModel::onColorChange
+            )
             Spacer(modifier = Modifier.height(20.dp))
             SearchIconHeader(
                 screenState.iconQuery,
@@ -170,69 +175,73 @@ fun SearchIconResults(
         columns = GridCells.Fixed(6),
     ) {
         items(categoryIcons){ icon ->
-            MySvgImage(
-                url = icon.url,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(50.dp)
-                    .clickable(
-                        onClick = {
-                            onIconSelect(icon.url)
-                        }
-                    )
-                ,
-                tint = MaterialTheme.colorScheme.onBackground
-            )
+            icon.url?.let {url ->
+                MySvgImage(
+                    url = url,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(50.dp)
+                        .clickable(
+                            onClick = {
+                                onIconSelect(url)
+                            }
+                        ),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     }
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorsPicker(
-    colors: List<Color>,
-    selected: Int,
-    onClickColor: (Int) -> Unit
+    selectedHue: Float,
+    onColorChange: (Float) -> Unit
 ){
     val circleSize = 40.dp
 
-    Row (
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ){
-        for ((index, color) in colors.withIndex()) {
+    val color = Constants.hslColor(hue = selectedHue)
 
-           Box(modifier = if(selected == index) Modifier
-               .size(circleSize)
-               .background(color = color.copy(alpha = 0.5f), shape = CircleShape)
-                 else Modifier.size(circleSize)
-           ){
-               Box(
-                   modifier = Modifier
-                       .padding(4.dp)
-                       .clip(CircleShape)
-                       .fillMaxSize()
-                       .clickable(onClick = { onClickColor(index) })
-                       .background(color = color)
+    Slider(
+        value = selectedHue,
+        onValueChange = onColorChange,
+        valueRange = 0f..360f,
+        modifier = Modifier.padding(vertical = 8.dp),
+        colors = SliderDefaults.colors(
+            thumbColor = color,
+            activeTrackColor =  Color.Gray,
+            inactiveTrackColor =  Color.Gray,
+        ),
+        thumb = {
+            Box(
+                modifier = Modifier
+                    .size(30.dp)
+                    .background(color = color, shape = CircleShape)
+            )
+        },
+    )
 
-               )
-           }
-        }
-    }
 }
 
 @Composable
 fun Header(
     categoryName: String,
-    categoryIcon: CategoryIcon,
+    imageUrl: String?,
+    colorHue: Float,
     onCategoryNameChange: (String) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CategoryImage(
-            categoryIcon
-        )
+        imageUrl?.let { url ->
+            CategoryImage(
+                CategoryIcon(url = url, colorHue = colorHue)
+            )
+        }?:run{
+//            TODO("ICON IMAGE IS NULL")
+        }
         Spacer(modifier = Modifier.width(10.dp))
         OutlinedTextField(
             value = categoryName,
@@ -257,16 +266,32 @@ fun CategoryImage(
         modifier = Modifier
             .padding(8.dp)
             .size(50.dp)
-            .background(color = categoryIcon.color, shape = RoundedCornerShape(14.dp))
+            .background(color = Constants.hslColor(categoryIcon.colorHue), shape = RoundedCornerShape(14.dp))
 
     ) {
+
         MySvgImage(
-            url = categoryIcon.url,
+            url = categoryIcon.url?:"",
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxSize(),
-            tint = tint
+            tint = Color.Black
         )
 
+    }
+}
+
+
+
+object Constants {
+    const val DEFAULT_SATURATION = 0.7f // 100%
+    const val DEFAULT_LIGHTNESS = 0.5f  // 50%
+
+    fun hslColor(hue: Float): Color{
+        return Color.hsl(
+            hue = hue,
+            saturation = DEFAULT_SATURATION,
+            lightness = DEFAULT_LIGHTNESS
+        )
     }
 }

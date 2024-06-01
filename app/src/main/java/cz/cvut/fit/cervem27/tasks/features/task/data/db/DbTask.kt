@@ -21,7 +21,6 @@ data class DbTask(
     val categoryId: Long,
     val taskName: String,
     val deadline: Date?
-    // add date
 )
 
 class Converters {

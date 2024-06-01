@@ -25,8 +25,7 @@ class TasksListViewModel(
         set(Calendar.MILLISECOND, 0)
     }
     val today = calendar.timeInMillis
-
-    init {
+     init {
         viewModelScope.launch {
             taskRepository.getTasks().collect{ tasks ->
                 _stateStream.update { it.copy(tasks = tasks) }
@@ -36,9 +35,17 @@ class TasksListViewModel(
 
     fun delete(task: Task){
         viewModelScope.launch {
-            taskRepository.deleteTask(task = task)
+             taskRepository.deleteTask(task = task)
+
         }
     }
+
+    fun undoDelete(task: Task){
+        viewModelScope.launch { // inserting task back (with new Id)
+            taskRepository.insertTask(task.copy(taskId = 0))
+        }
+    }
+
 }
 data class TaskListScreenState(
     val tasks: List<Task> = emptyList()
