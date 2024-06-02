@@ -19,7 +19,9 @@ room = "2.6.1"
 koin = "3.5.3"
 lifecycleVersion = "2.7.0"
 ksp = "1.9.23-1.0.19"
-
+permissions = "0.30.1"
+workRuntime = "2.9.0"
+koinWorkManager = "3.4.3"
 
 
 [libraries]
@@ -29,7 +31,6 @@ coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coilCompose
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -54,6 +55,9 @@ koinAndroidxCompose = { group = "io.insert-koin", name = "koin-androidx-compose"
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleVersion" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleVersion" }
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleVersion" }
+accompanits-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permissions"}
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntime" }
+koin-androidx-workmanager = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koinWorkManager"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -19,6 +19,7 @@ interface TasksDao {
     @Query("SELECT * FROM categories")
     fun getCategoriesStream(): Flow<List<DbCategory>>
 
+
     @Insert
     suspend fun insertCategory(categories: DbCategory)
 
@@ -41,5 +42,8 @@ interface TasksDao {
     fun getAllTasksWithCategoriesOrderedStream(): Flow<List<DbTaskWithCategory>>
     @Update
     suspend fun updateTask(toDbTask: DbTask)
+
+    @Query("SELECT * FROM tasks WHERE deadline BETWEEN :start AND :end")
+    suspend fun getTasksForNextDay(start: Long, end: Long): List<DbTask>
 
 }

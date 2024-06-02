@@ -4,7 +4,9 @@
     <string name="task">Task</string>
     <string name="tasks">Tasks</string>
     <string name="categories">Categories</string>
-    <string name="search_icon">Search Icon...</string>
+    <string name="search_icon">Search Icon…</string>
     <string name="default_icon">https://api.iconify.design/quill/todo.svg</string>
     <string name="d">%1$s d</string>
+    <string name="notification_title">Upcoming deadline</string>
+    <string name="notification_description">description</string>
 </resources>

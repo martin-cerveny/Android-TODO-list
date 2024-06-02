@@ -82,6 +82,11 @@ dependencies {
     implementation(libs.kotlinxSerializationJson)
     implementation(libs.retrofitKotlinxSerializationConverter)
 
+
+    implementation(libs.accompanits.permissions)
+    implementation(libs.koin.androidx.workmanager)
+
+
     implementation(libs.roomKtx)
     ksp(libs.roomCompiler)
 
@@ -89,5 +94,6 @@ dependencies {
     implementation(platform(libs.koinBom))
     implementation(libs.koinAndroid)
     implementation(libs.koinAndroidxCompose)
+    implementation(libs.androidx.work.runtime.ktx)
 
 }
