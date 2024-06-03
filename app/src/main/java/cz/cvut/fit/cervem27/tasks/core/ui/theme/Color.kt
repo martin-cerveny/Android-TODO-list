@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.ui.theme
+package cz.cvut.fit.cervem27.tasks.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

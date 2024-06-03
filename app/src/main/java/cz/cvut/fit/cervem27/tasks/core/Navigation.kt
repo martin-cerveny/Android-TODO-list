@@ -15,23 +15,17 @@ import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreat
 @Composable
 fun Navigation(
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier
+     modifier: Modifier = Modifier
 ){
     NavHost(
         navController = navController,
         modifier = modifier,
         startDestination = Screen.TasksListScreen.route,
-//        enterTransition = {
-//            EnterTransition.None
-//        },
-//        exitTransition = {
-//            ExitTransition.None
-//        }
     ){
         composable(route =  Screen.TasksListScreen.route){
-            TasksListScreen(navController = navController, snackbarHostState = snackbarHostState)
+            TasksListScreen(navController = navController)
         }
+
         composable(route =  Screen.CategoriesListScreen.route){
             CategoriesListScreen(navController = navController)
         }

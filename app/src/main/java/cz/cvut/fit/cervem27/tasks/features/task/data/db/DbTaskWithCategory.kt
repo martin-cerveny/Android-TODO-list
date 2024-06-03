@@ -10,5 +10,5 @@ data class DbTaskWithCategory(
         parentColumn = "categoryId",
         entityColumn = "categoryId"
     )
-    val category: DbCategory
+    val category: DbCategory?
 )

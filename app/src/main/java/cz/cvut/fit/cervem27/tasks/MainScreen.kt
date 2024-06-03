@@ -29,21 +29,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cz.cvut.fit.cervem27.tasks.core.Navigation
 import cz.cvut.fit.cervem27.tasks.core.Screen
+import cz.cvut.fit.cervem27.tasks.features.notification.Permission
 
 @Composable
 fun MainScreen() {
-    val snackbarHostState = remember { SnackbarHostState() }
+
 
     val navController = rememberNavController()
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentEntryRoute = currentEntry?.destination?.route
     val shouldShowBottomNavigation = currentEntryRoute?.let(::hasBottomNavigation) ?: false
 
+    // todo
+    Permission(rationale = "xxxxxxx")
 
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+
         bottomBar = {
             if (shouldShowBottomNavigation) {
                 BottomAppBar {
@@ -84,7 +85,6 @@ fun MainScreen() {
 
         Navigation(
             navController = navController,
-            snackbarHostState = snackbarHostState,
             modifier = Modifier.padding(innerPadding)
         )
     }

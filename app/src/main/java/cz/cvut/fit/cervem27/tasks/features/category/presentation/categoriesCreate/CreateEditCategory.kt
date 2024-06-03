@@ -2,6 +2,7 @@ package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCrea
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,8 +22,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -38,14 +42,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Url
 import org.koin.androidx.compose.koinViewModel
-import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.MySvgImage
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.IconColorsConstants
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.SvgImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +62,7 @@ fun CreateEditCategory(
     viewModel: CreateCategoryViewModel = koinViewModel(),
 ){
     val screenState by viewModel.categoryStateStream.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -61,12 +70,10 @@ fun CreateEditCategory(
                 actions = {
                     Button(
                         onClick = {
-                            viewModel.onConfirm()
+                            viewModel.onConfirm() // todo ???
                             navController.navigateUp()
                           },
-                        modifier = Modifier
-                            .padding(8.dp)
-
+                        modifier = Modifier.padding(8.dp)
                     ) {
                         Text(text = "Create")
                     }
@@ -103,14 +110,14 @@ fun CreateEditCategory(
             .padding(it)
             .padding(8.dp)) {
             Header(
-                categoryName = screenState.name,
-                imageUrl = screenState.categoryUrl,
-                colorHue = screenState.selectedHue,
+                categoryName = screenState.categoryName,
+                iconUrl = screenState.iconUrl,
+                iconColor = IconColorsConstants.hslColor(screenState.iconHue),
                 onCategoryNameChange = viewModel::onCategoryNameChange
             )
             Spacer(modifier = Modifier.height(20.dp))
             ColorsPicker(
-                selectedHue = screenState.selectedHue,
+                selectedHue = screenState.iconHue,
                 viewModel::onColorChange
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -119,17 +126,35 @@ fun CreateEditCategory(
                 viewModel::onIconsSearchQueryChange
             )
             Spacer(modifier = Modifier.height(20.dp))
-            SearchIconResults(
-                screenState.iconsResult,
-                modifier = Modifier.weight(1f),
-                onIconSelect = viewModel::onIconChange
-            )
+
+            Box(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                contentAlignment = Alignment.TopCenter
+
+            ){
+
+                when(screenState.searchState){
+                    ScreenState.SearchState.SEARCHING -> LoadingIcons()
+                    ScreenState.SearchState.ERROR -> IconsSearchingError()
+                    ScreenState.SearchState.OK ->
+                        if(screenState.iconsResult.isEmpty()){
+                            NoIconsFound(query = screenState.iconQuery)
+                        } else {
+                            SearchIconResults(
+                                categoryIcons = screenState.iconsResult,
+                                onIconSelect = viewModel::onIconChange
+                            )
+                        }
+
+                }
+
+            }
         }
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun SearchIconHeader(
     iconSearchQuery: String,
@@ -164,31 +189,29 @@ fun SearchIconHeader(
 
 @Composable
 fun SearchIconResults(
-    categoryIcons: List<CategoryIcon>,
+    categoryIcons: List<Url>,
     modifier: Modifier = Modifier,
     onIconSelect: (String) -> Unit
 ){
-//    val icons: List<ImageVector> = listOf(Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,Icons.Default.AccountCircle,)
+
 
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(6),
     ) {
         items(categoryIcons){ icon ->
-            icon.url?.let {url ->
-                MySvgImage(
-                    url = url,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(50.dp)
-                        .clickable(
-                            onClick = {
-                                onIconSelect(url)
-                            }
-                        ),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            SvgImage(
+                url = icon,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(50.dp)
+                    .clickable(
+                        onClick = {
+                            onIconSelect(icon)
+                        }
+                    ),
+                tint = MaterialTheme.colorScheme.onBackground
+            )
         }
     }
 
@@ -200,9 +223,7 @@ fun ColorsPicker(
     selectedHue: Float,
     onColorChange: (Float) -> Unit
 ){
-    val circleSize = 40.dp
-
-    val color = Constants.hslColor(hue = selectedHue)
+    val color = IconColorsConstants.hslColor(hue = selectedHue)
 
     Slider(
         value = selectedHue,
@@ -228,20 +249,14 @@ fun ColorsPicker(
 @Composable
 fun Header(
     categoryName: String,
-    imageUrl: String?,
-    colorHue: Float,
+    iconUrl: String?,
+    iconColor: Color,
     onCategoryNameChange: (String) -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        imageUrl?.let { url ->
-            CategoryImage(
-                CategoryIcon(url = url, colorHue = colorHue)
-            )
-        }?:run{
-//            TODO("ICON IMAGE IS NULL")
-        }
+        CategoryIconColoredBackground(iconUrl = iconUrl, backgroundColor = iconColor, tint = Color.Black)
         Spacer(modifier = Modifier.width(10.dp))
         OutlinedTextField(
             value = categoryName,
@@ -256,42 +271,45 @@ fun Header(
 
 }
 
+@Preview
+@Composable
+fun IconsSearchingError(){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "Error while retrieving icons.",
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        Text(
+            text = "Check network connection",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
 
 @Composable
-fun CategoryImage(
-    categoryIcon: CategoryIcon,
-    tint: Color = Color.Black
-){
-    Box(
-        modifier = Modifier
-            .padding(8.dp)
-            .size(50.dp)
-            .background(color = Constants.hslColor(categoryIcon.colorHue), shape = RoundedCornerShape(14.dp))
-
-    ) {
-
-        MySvgImage(
-            url = categoryIcon.url?:"",
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxSize(),
-            tint = Color.Black
+fun NoIconsFound(query: String){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            text = "No icons found",
+            style = MaterialTheme.typography.headlineSmall
         )
 
-    }
-}
-
-
-
-object Constants {
-    const val DEFAULT_SATURATION = 0.7f // 100%
-    const val DEFAULT_LIGHTNESS = 0.5f  // 50%
-
-    fun hslColor(hue: Float): Color{
-        return Color.hsl(
-            hue = hue,
-            saturation = DEFAULT_SATURATION,
-            lightness = DEFAULT_LIGHTNESS
+        Text(
+            text = if(query.length < 3) "Enter at least 3 characters" else "Try different keyword",
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
+
+
+@Composable
+fun LoadingIcons(){
+    CircularProgressIndicator()
+}
+

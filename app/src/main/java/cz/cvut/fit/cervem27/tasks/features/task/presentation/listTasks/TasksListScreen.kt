@@ -1,11 +1,7 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
 import android.util.Log
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,10 +42,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.core.SwipeToDismissContainer
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
+import cz.cvut.fit.cervem27.tasks.core.ui.SwipeToDismissContainer
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.IconColorsConstants
+import cz.cvut.fit.cervem27.tasks.features.task.data.db.Converters
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
-import cz.cvut.fit.cervem27.tasks.features.task.presentation.Permission
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.TimeUnit
@@ -59,16 +56,17 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun TasksListScreen(
     viewModel: TasksListViewModel = koinViewModel(),
-    snackbarHostState: SnackbarHostState,
     navController: NavController
 ){
     val screenState by viewModel.stateStream.collectAsStateWithLifecycle()
     val today: Long = viewModel.today
     val scope = rememberCoroutineScope()
-
-    Permission(rationale = "xxxxxxx")
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             TopAppBar(title = { Text(text = stringResource(R.string.tasks)) })
         },
@@ -155,8 +153,9 @@ fun TaskCard(task: Task, today: Long, modifier: Modifier = Modifier){
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            CategoryImage(
-               task.category.categoryIcon
+            CategoryIconColoredBackground(
+               iconUrl =  task.category?.url,
+                backgroundColor = task.category?.let{ IconColorsConstants.hslColor(it.colorHue) }
             )
             TaskDetails(
                 task = task,
@@ -165,8 +164,6 @@ fun TaskCard(task: Task, today: Long, modifier: Modifier = Modifier){
 
 
         }
-        val progress = task.subtasks.count { it.completed }.toFloat() / task.subtasks.size
-        LinearProgressIndicator(progress = progress)
     }
 }
 
@@ -176,9 +173,11 @@ fun TaskDetails(task: Task, today: Long){
         Modifier.padding(8.dp)
     ) {
         Row{
-            Text(text = task.category.categoryName)
+            task.category?.let {category ->
+                Text(text = category.categoryName)
+            }
             Spacer(modifier = Modifier.weight(1f))
-            Log.d("today", "${task.date?.time?:0 - today}")
+            Log.d("today", "${task.date?.time?:0 - today}") // todo
             task.date?.let{date ->
                 Text(text = stringResource(
                     R.string.d,

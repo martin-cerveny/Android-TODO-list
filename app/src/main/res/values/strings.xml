@@ -9,4 +9,6 @@
     <string name="d">%1$s d</string>
     <string name="notification_title">Upcoming deadline</string>
     <string name="notification_description">description</string>
+    <string name="default_category_icon">Default category icon</string>
+    <string name="no_category">No Category</string>
 </resources>

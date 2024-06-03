@@ -10,7 +10,6 @@ import cz.cvut.fit.cervem27.tasks.features.task.data.db.Converters
 import cz.cvut.fit.cervem27.tasks.features.task.data.db.DbTask
 
 @Database(version = 1, entities = [DbCategory::class, DbTask::class])
-//@TypeConverters(Converters::class)
 @TypeConverters(Converters::class)
 abstract class TasksDatabase : RoomDatabase() {
 

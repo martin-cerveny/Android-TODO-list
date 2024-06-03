@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.ComposeCompilerApi
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,11 +44,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CategoryImage
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.IconColorsConstants
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 @Composable
@@ -98,15 +95,10 @@ fun CreateEditTask(
             screenState.categories
         )
 
-       // Subtasks()
 
     }
 
 }
-//@Composable
-//Subtasks(){
-//
-//}
 
 @Preview
 @Composable
@@ -140,7 +132,7 @@ fun ConfirmButtons(onCreateClick: () -> Unit = {}, onCancelClick: () -> Unit = {
 @Composable
 fun DropDown(
     expanded: Boolean,
-    onSelectCategory: (Category) -> Unit,
+    onSelectCategory: (Category?) -> Unit,
     categories: List<Category>
 ){
 
@@ -154,18 +146,30 @@ fun DropDown(
             .fillMaxSize()
             .background(Color(0xFF212121), shape = RoundedCornerShape(16.dp))
     ) {
+        DropdownItem(category = null, onSelectCategory = onSelectCategory)
         for(category in categories){
-            DropdownMenuItem(
-                text = { Text(text = category.categoryName) },
-                leadingIcon = { CategoryImage(categoryIcon = category.categoryIcon) },
-                onClick = { onSelectCategory(category) }
-            )
+            DropdownItem(category = category, onSelectCategory = onSelectCategory)
         }
 
     }
 
 }
-// PastOrPresentSelectableDates.kt
+
+@Composable
+fun DropdownItem(
+    category: Category?,
+    onSelectCategory: (Category?) -> Unit
+){
+    DropdownMenuItem(
+        text = { Text(text = category?.categoryName?: stringResource(id = R.string.no_category)) },
+        leadingIcon = { CategoryIconColoredBackground(
+            iconUrl = category?.url,
+            backgroundColor = category?.let{ IconColorsConstants.hslColor(it.colorHue) }
+        ) },
+        onClick = { onSelectCategory(category) }
+    )
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -254,26 +258,25 @@ fun SelectedCategory(
             .fillMaxWidth()
             .clickable(onClick = onSelectCategoryClick)
     ) {
-        category?.let {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CategoryImage(
-                    categoryIcon = category.categoryIcon
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = category.categoryName,
-                    fontSize = 20.sp,
-                    color = Color.White
 
-                )
-            }
-        }?:run {
-            Text(text = "Select category...",
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CategoryIconColoredBackground(
+                iconUrl = category?.url,
+                backgroundColor = category?.let {category ->
+                    IconColorsConstants.hslColor(category.colorHue)
+                }?:run{
+                    Color(0xFF3D8ECE)
+                }
+
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = category?.categoryName?: stringResource(R.string.no_category),
                 fontSize = 20.sp,
-                color = Color.White,
-                modifier = Modifier.padding(16.dp)
+                color = Color.White
+
             )
         }
     }

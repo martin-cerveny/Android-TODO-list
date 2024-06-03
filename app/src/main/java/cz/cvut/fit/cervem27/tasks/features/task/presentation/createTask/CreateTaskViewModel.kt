@@ -1,15 +1,12 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask
 
-import android.util.Log
-import androidx.compose.ui.graphics.Color
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
-import cz.cvut.fit.cervem27.tasks.features.category.data.db.CategoryLocalDataSource
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
 import cz.cvut.fit.cervem27.tasks.features.task.data.TaskRepository
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,29 +71,28 @@ class CreateTaskViewModel(
     }
 
     fun addTask() {//task: Task){
-        stateStream.value.category?.let {category ->
-            viewModelScope.launch {
-                val task = Task(
-                    taskId = id?:0,
-                    name = stateStream.value.taskName,
-                    category = category,
-                    date = stateStream.value.date,
-                    subtasks = emptyList()
-                )
-                id?.let {
-                    taskRepository.updateTask(task)
-                }?:run {
-                    taskRepository.insertTask(task)
-                }
 
-
+        viewModelScope.launch {
+            val task = Task(
+                taskId = id?:0,
+                name = stateStream.value.taskName,
+                category = stateStream.value.category,
+                date = stateStream.value.date,
+            )
+            id?.let {
+                taskRepository.updateTask(task)
+            }?:run {
+                taskRepository.insertTask(task)
             }
+
+
         }
+
     }
 
 
 
-    fun onSelectedCategory(category: Category) {
+    fun onSelectedCategory(category: Category?) {
         _stateStream.update {
             it.copy(
                 categoriesSelectExpanded = false,

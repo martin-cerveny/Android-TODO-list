@@ -10,5 +10,4 @@ val coreModule = module {
     single { TasksDatabase.newInstance(androidContext()) }
 
     single{get<TasksDatabase>().tasksDao()}
-
 }

@@ -5,5 +5,6 @@ import androidx.compose.ui.graphics.Color
 data class Category (
     val categoryId: Long,
     val categoryName: String,
-    val categoryIcon: CategoryIcon
+    val url: Url?,
+    val colorHue: Float
 )

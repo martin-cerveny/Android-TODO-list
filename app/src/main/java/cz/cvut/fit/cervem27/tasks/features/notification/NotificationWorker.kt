@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.task.data.notification
+package cz.cvut.fit.cervem27.tasks.features.notification
 
 import android.content.Context
 import androidx.work.CoroutineWorker

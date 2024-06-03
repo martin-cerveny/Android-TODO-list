@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import cz.cvut.fit.cervem27.tasks.ui.theme.TasksTheme
+import cz.cvut.fit.cervem27.tasks.core.ui.theme.TasksTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

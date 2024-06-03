@@ -1,18 +1,25 @@
 package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate
 
 
+
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.category.domain.CategoryIcon
+import cz.cvut.fit.cervem27.tasks.features.category.domain.Url
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class CreateCategoryViewModel(
     private val createRepository: CategoryRepository,
     private val savedStateHandle: SavedStateHandle,
@@ -25,55 +32,69 @@ class CreateCategoryViewModel(
 
     init {
         viewModelScope.launch {
-            id?.let { categoryId ->
+            id?.let { categoryId ->         // id argument passed -> loading an existing category
                 val category = createRepository.getCategory(categoryId)
                 _categoryStateStream.update {
                     it.copy(
-                        name = category.categoryName,
-                        categoryUrl = category.categoryIcon.url,
-                        selectedHue = category.categoryIcon.colorHue
+                        categoryName = category.categoryName,
+                        iconUrl = category.url,
+                        iconHue = category.colorHue
                     )
                 }
             }
         }
+
+
+        viewModelScope.launch {
+            _categoryStateStream
+                .map { it.iconQuery }
+                .debounce(500)
+                .distinctUntilChanged()
+                .collectLatest { query ->
+                    if (query.length >= 3) {
+                        try {
+                            val icons = createRepository.searchIcons(query)
+                            _categoryStateStream.update {
+                                it.copy(iconsResult = icons,
+                                    searchState = ScreenState.SearchState.OK
+                                )
+                            }
+                        } catch (t: Throwable){
+                            _categoryStateStream.update {
+                                it.copy(iconsResult = emptyList(),
+                                    searchState = ScreenState.SearchState.ERROR
+                                )
+                            }
+                        }
+                    } else {
+                        _categoryStateStream.update {
+                            it.copy(
+                                iconsResult = emptyList(),
+                                searchState = ScreenState.SearchState.OK
+                            )
+                        }
+                    }
+                }
+        }
+
     }
 
-
-
-
-
-
     fun onIconsSearchQueryChange(query: String){
-
-
-
-        _categoryStateStream.update { it.copy(iconQuery = query) }
-        if(query.length < 3){
-            // todo enter at least 3 characters
-        } else {
-            viewModelScope.launch {
-                try {
-                  //  createRepository.getCategories()
-                    _categoryStateStream.update {
-                        it.copy(iconsResult = createRepository.searchIcons(query))
-                    }
-                } catch (t: Throwable){
-                    _categoryStateStream.update { it.copy(iconsResult =  emptyList())}
-                    //todo network error notice user
-                }
-            }
-        }
+        _categoryStateStream.update { it.copy(
+            iconQuery = query,
+            searchState = ScreenState.SearchState.SEARCHING
+        ) }
     }
 
     fun onCategoryNameChange(name: String){
         _categoryStateStream.update {
-            it.copy(name = name)
+            it.copy(categoryName = name)
         }
     }
 
     fun onColorChange(hue: Float){
         _categoryStateStream.update {
-            it.copy(selectedHue = hue)
+            it.copy(iconHue = hue)
         }
     }
 
@@ -81,11 +102,9 @@ class CreateCategoryViewModel(
         viewModelScope.launch {
             val category = Category(
                 categoryId = id?:0,
-                categoryName = categoryStateStream.value.name,
-                categoryIcon = CategoryIcon(
-                    url = categoryStateStream.value.categoryUrl?:"",
-                    colorHue =  categoryStateStream.value.selectedHue
-                ),
+                categoryName = categoryStateStream.value.categoryName,
+                url = categoryStateStream.value.iconUrl,
+                colorHue =  categoryStateStream.value.iconHue
             )
             id?.let {
                 createRepository.updateCategory(category)
@@ -97,26 +116,36 @@ class CreateCategoryViewModel(
 
     fun onIconChange(iconUrl: String){
         _categoryStateStream.update { screenState ->
-           screenState.copy(categoryUrl = iconUrl )
+           screenState.copy(iconUrl = iconUrl )
         }
     }
     fun clearCategoryName(){
         _categoryStateStream.update {
-            it.copy(name = "")
+            it.copy(categoryName = "")
         }
     }
 
     fun clearIconsSearchQuery(){
         _categoryStateStream.update {
-            it.copy(iconQuery = "", iconsResult = emptyList())
+            it.copy(
+                iconQuery = "",
+                iconsResult = emptyList()
+            )
         }
     }
 }
 
 data class ScreenState(
-    val name: String = "",
-    val categoryUrl: String? = null,
-    val selectedHue: Float = 0f,
+    val categoryName: String = "",
+    val iconUrl: String? = null,
+    val iconHue: Float = 0f, // todo
     val iconQuery: String = "",
-    val iconsResult: List<CategoryIcon> = emptyList()
-)
+    val iconsResult: List<Url> = emptyList(),
+    val searchState: SearchState = SearchState.OK
+) {
+    enum class SearchState{
+        SEARCHING,
+        OK,
+        ERROR
+    }
+}

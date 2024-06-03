@@ -11,5 +11,4 @@ sealed class Screen(val route: String) {
     data object CategoriesEditScreen : Screen("categoriesEdit") {
         const val ID_KEY = "id"
     }
-
 }

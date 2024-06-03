@@ -15,10 +15,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TasksDao {
-
+// Categories --------------------------------------------------------------------------------------
     @Query("SELECT * FROM categories")
     fun getCategoriesStream(): Flow<List<DbCategory>>
 
+    @Query("SELECT * FROM categories WHERE categoryId = :id")
+    suspend fun getCategory(id: Long): DbCategory
 
     @Insert
     suspend fun insertCategory(categories: DbCategory)
@@ -27,9 +29,10 @@ interface TasksDao {
     suspend fun updateCategory(character: DbCategory)
     @Delete
     suspend fun deleteCategory(task: DbCategory)
-
-    @Query("SELECT * FROM categories WHERE categoryId = :id")
-    suspend fun getCategory(id: Long): DbCategory
+// TASKS -------------------------------------------------------------------------------------------
+    @Transaction
+    @Query("SELECT * FROM tasks ORDER BY deadline")
+    fun getAllTasksWithCategoriesOrderedStream(): Flow<List<DbTaskWithCategory>>
 
     @Query("SELECT * FROM tasks WHERE taskId = :id")
     suspend fun getTask(id: Long): DbTaskWithCategory
@@ -37,13 +40,10 @@ interface TasksDao {
     suspend fun deleteTask(task: DbTask)
     @Insert
     suspend fun insertTask(task: DbTask)
-    @Transaction
-    @Query("SELECT * FROM tasks ORDER BY deadline")
-    fun getAllTasksWithCategoriesOrderedStream(): Flow<List<DbTaskWithCategory>>
+
     @Update
     suspend fun updateTask(toDbTask: DbTask)
 
     @Query("SELECT * FROM tasks WHERE deadline BETWEEN :start AND :end")
     suspend fun getTasksForNextDay(start: Long, end: Long): List<DbTask>
-
 }
