@@ -12,7 +12,6 @@ class CategoryRepository(
     fun getCategories() = localDataSource.getCategories()
     suspend fun getCategory(id: Long) = localDataSource.getCategory(id)
     suspend fun insertCategory(category: Category) = localDataSource.insertCategory(category)
-
     suspend fun updateCategory(category: Category) = localDataSource.updateCategory(category)
     suspend fun deleteCategory(category: Category) = localDataSource.deleteCategory(category)
     suspend fun searchIcons(query: String) = remoteDataSource.searchIcons(query)

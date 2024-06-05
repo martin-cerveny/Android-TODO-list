@@ -19,17 +19,17 @@ fun Navigation(
 ){
     NavHost(
         navController = navController,
-        modifier = modifier,
         startDestination = Screen.TasksListScreen.route,
+        modifier = modifier,
     ){
         composable(route =  Screen.TasksListScreen.route){
             TasksListScreen(navController = navController)
         }
-
+        //------------------------------------------------------------------------------------------
         composable(route =  Screen.CategoriesListScreen.route){
             CategoriesListScreen(navController = navController)
         }
-
+        //------------------------------------------------------------------------------------------
         composable(
             route = Screen.TasksEditScreen.route + "/{${Screen.TasksEditScreen.ID_KEY}}",
             arguments = listOf(
@@ -40,11 +40,11 @@ fun Navigation(
         ) {
             CreateEditTask(navController = navController)
         }
-
+        //------------------------------------------------------------------------------------------
         composable(route =  Screen.TasksCreateScreen.route){
             CreateEditTask(navController = navController)
         }
-
+        //------------------------------------------------------------------------------------------
         composable(
             route = Screen.CategoriesEditScreen.route + "/{${Screen.CategoriesEditScreen.ID_KEY}}",
             arguments = listOf(
@@ -55,11 +55,11 @@ fun Navigation(
         ) {
             CreateEditCategory(navController = navController)
         }
-
+        //------------------------------------------------------------------------------------------
         composable(route =  Screen.CategoriesCreateScreen.route){
             CreateEditCategory(navController = navController)
         }
-
+        //------------------------------------------------------------------------------------------
     }
     
 }

@@ -35,10 +35,8 @@ class CreateTaskViewModel(
         set(Calendar.MILLISECOND, 0)
     }
     init {
-
-
         viewModelScope.launch {
-            id?.let { taskId ->
+            id?.let { taskId ->     // editing an exiting task -> get task from db
                 val task = taskRepository.getTask(taskId)
                 _stateStream.update {
                     it.copy(
@@ -60,18 +58,14 @@ class CreateTaskViewModel(
         _stateStream.update {
             it.copy(taskName = name)
         }
-
     }
 
     fun dateValidator(time: Long) : Boolean{
-
         val today: Long = calendar.timeInMillis
-
         return time >= today
     }
 
-    fun addTask() {//task: Task){
-
+    fun addTask() {
         viewModelScope.launch {
             val task = Task(
                 taskId = id?:0,
@@ -84,10 +78,7 @@ class CreateTaskViewModel(
             }?:run {
                 taskRepository.insertTask(task)
             }
-
-
         }
-
     }
 
 
@@ -131,6 +122,4 @@ data class CreateTaskScreenState(
     val date: Date? = null,
     val dateSelectExpanded: Boolean = false,
     val categories: List<Category> = emptyList(),
-
-
 )

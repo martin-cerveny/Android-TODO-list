@@ -16,10 +16,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -27,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -34,18 +36,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.core.ui.SwipeToDismissContainer
+import cz.cvut.fit.cervem27.tasks.core.ui.theme.IconColorsConstants
+import cz.cvut.fit.cervem27.tasks.features.task.presentation.SwipeToDismissContainer
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.IconColorsConstants
-import cz.cvut.fit.cervem27.tasks.features.task.data.db.Converters
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -62,25 +63,41 @@ fun TasksListScreen(
     val today: Long = viewModel.today
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     Scaffold(
+
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
         topBar = {
-            TopAppBar(title = { Text(text = stringResource(R.string.tasks)) })
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.tasks),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
         },
         bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.TasksCreateScreen.route) },
-                containerColor = Color(0xFF0591FF),
-                contentColor = Color.Black
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_task))
             }
-        }
-    ) { padding ->
+        },
+
+        contentColor = MaterialTheme.colorScheme.primaryContainer,
+
+        ) { padding ->
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
@@ -100,8 +117,8 @@ fun TasksListScreen(
                             scope.launch {
                                 val result = snackbarHostState
                                     .showSnackbar(
-                                        message = "Task deleted.",
-                                        actionLabel = "Undo",
+                                        message = context.getString(R.string.task_deleted),
+                                        actionLabel = context.getString(R.string.undo),
                                         duration = SnackbarDuration.Short
                                     )
                                 when (result) {
@@ -109,15 +126,14 @@ fun TasksListScreen(
                                         viewModel.undoDelete(task)
                                     }
 
-                                    SnackbarResult.Dismissed -> {
-                                        /* Handle snackbar dismissed */
-                                    }
+                                    SnackbarResult.Dismissed -> {}
                                 }
                             }
 
                         },
                         painter = painterResource(id = R.drawable.icon_park_outline__check_one),
-                        backgroundColor = Color(0xFF4CAF50),
+                        painterTint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                         padding = PaddingValues(vertical = 10.dp)
                     ) {
                         TaskCard(
@@ -145,6 +161,9 @@ fun TasksListScreen(
 @Composable
 fun TaskCard(task: Task, today: Long, modifier: Modifier = Modifier){
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        ),
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
@@ -154,7 +173,7 @@ fun TaskCard(task: Task, today: Long, modifier: Modifier = Modifier){
             verticalAlignment = Alignment.CenterVertically
         ){
             CategoryIconColoredBackground(
-               iconUrl =  task.category?.url,
+               iconUrl =  task.category?.iconUrl,
                 backgroundColor = task.category?.let{ IconColorsConstants.hslColor(it.colorHue) }
             )
             TaskDetails(
@@ -174,21 +193,29 @@ fun TaskDetails(task: Task, today: Long){
     ) {
         Row{
             task.category?.let {category ->
-                Text(text = category.categoryName)
+                Text(
+                    text = category.categoryName,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
             }
             Spacer(modifier = Modifier.weight(1f))
-            Log.d("today", "${task.date?.time?:0 - today}") // todo
+
             task.date?.let{date ->
-                Text(text = stringResource(
-                    R.string.d,
-                    TimeUnit.MILLISECONDS.toDays(date.time - today)
-                ))
-            }
+                val remainingMillis = date.time - today
+                // negative remaining days are rounded up
+                val remainingDays = TimeUnit.MILLISECONDS.toDays(remainingMillis) - if(remainingMillis < 0) 1 else 0
+                    Text(
+                        text = stringResource(R.string.d, remainingDays),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
         }
         Text(
             text = task.name,
-            color = Color.White,
-            fontSize = 18.sp
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSecondaryContainer
 
         )
     }

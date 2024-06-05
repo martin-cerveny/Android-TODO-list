@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.notification
+package cz.cvut.fit.cervem27.tasks.features.notification.data
 
 import android.Manifest
 import android.app.NotificationChannel
@@ -8,15 +8,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import cz.cvut.fit.cervem27.tasks.MainActivity
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.data.db.TasksDao
-import cz.cvut.fit.cervem27.tasks.features.task.data.db.Converters
-import kotlinx.coroutines.delay
+import cz.cvut.fit.cervem27.tasks.features.task.data.db.TimeDbConvertors
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.Calendar
@@ -34,8 +32,8 @@ class NotificationHelper(
     }
 
     suspend fun notifyUpcomingDeadlines(
-        title: String = "Title",
-        content: String = "Photo $notificationId uploading...",
+        title: String = context.getString(R.string.app_name),
+        content: String = context.getString(R.string.deadline_notification_content),
         priority: Int = NotificationCompat.PRIORITY_HIGH
     ) {
 
@@ -43,7 +41,7 @@ class NotificationHelper(
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context,
-            7,
+            0,
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
@@ -55,7 +53,7 @@ class NotificationHelper(
             return
         }
 
-        if(! deadlineInOneDay()){
+        if(! isDeadlineToday()){
             return
         }
 
@@ -70,15 +68,11 @@ class NotificationHelper(
             .setAutoCancel(true)
             .setPriority(priority)
 
-
-        builder.setContentText("Done!")
-        delay(100)
         with(NotificationManagerCompat.from(context)) {
             notify(notificationId, builder.build())
         }
         notificationId += 1
     }
-
     private fun createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.notification_title)
@@ -93,8 +87,9 @@ class NotificationHelper(
         }
     }
 
-    private suspend fun deadlineInOneDay() : Boolean{
-        Log.d("inhere", "searching deadlines")
+
+    // returns true if there's a deadlined planed for today (false otherwise)
+    private suspend fun isDeadlineToday() : Boolean{
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
@@ -104,8 +99,8 @@ class NotificationHelper(
         val start = calendar.time
         calendar.add(Calendar.DAY_OF_YEAR, 1)
         val end = calendar.time
-        val deadlineTasks = tasksDao.getTasksForNextDay(Converters().dateToTimestamp(start)?:0,
-            Converters().dateToTimestamp(end)?:0 )
+        val deadlineTasks = tasksDao.getTasksByDeadline(TimeDbConvertors().dateToTimestamp(start)?:0,
+            TimeDbConvertors().dateToTimestamp(end)?:0 )
         return deadlineTasks.isNotEmpty()
     }
 }

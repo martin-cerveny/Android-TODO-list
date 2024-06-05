@@ -1,35 +1,24 @@
 package cz.cvut.fit.cervem27.tasks
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cz.cvut.fit.cervem27.tasks.core.Navigation
 import cz.cvut.fit.cervem27.tasks.core.Screen
-import cz.cvut.fit.cervem27.tasks.features.notification.Permission
+import cz.cvut.fit.cervem27.tasks.features.notification.presentation.Permission
 
 @Composable
 fun MainScreen() {
@@ -40,14 +29,14 @@ fun MainScreen() {
     val currentEntryRoute = currentEntry?.destination?.route
     val shouldShowBottomNavigation = currentEntryRoute?.let(::hasBottomNavigation) ?: false
 
-    // todo
-    Permission(rationale = "xxxxxxx")
+
+    Permission()
 
     Scaffold(
 
         bottomBar = {
             if (shouldShowBottomNavigation) {
-                BottomAppBar {
+                BottomAppBar(containerColor = MaterialTheme.colorScheme.primaryContainer) {
                     NavigationBarItem(
                         painter = painterResource(id = R.drawable.baseline_task_alt_24),
                         name = stringResource(id = R.string.tasks),
@@ -75,7 +64,7 @@ fun MainScreen() {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                        }
+                        },
                     )
 
                 }
@@ -102,19 +91,19 @@ private fun RowScope.NavigationBarItem(
     painter: Painter,
     name: String,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val contentColor = if (selected) {
         MaterialTheme.colorScheme.primary
     } else {
-        MaterialTheme.colorScheme.onTertiary
+        MaterialTheme.colorScheme.tertiary
     }
 
     NavigationBarItem(
         selected = selected,
         onClick = onClick,
         icon = {
-            Icon(painter = painter, contentDescription = null, tint = contentColor)
+            Icon(painter = painter, contentDescription = name, tint = contentColor)
         },
         label = {
             Text(text = name, style = MaterialTheme.typography.labelMedium, color = contentColor)

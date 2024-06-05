@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.core.ui
+package cz.cvut.fit.cervem27.tasks.features.task.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,22 +31,19 @@ import kotlinx.coroutines.delay
 fun <T> SwipeToDismissContainer(
     item: T,
     onDelete: (T) -> Unit,
-    animationDuration: Int = 500,
     painter: Painter,
+    painterTint: Color,
     backgroundColor: Color,
     padding: PaddingValues,
     content: @Composable (T) -> Unit
 ) {
     var isDismissed by remember { mutableStateOf(false) }
-    var isRestoring by remember { mutableStateOf(false) }
 
 
     val state = rememberDismissState(
         confirmValueChange = { value ->
             if (value == DismissValue.DismissedToStart || value == DismissValue.DismissedToEnd ) {
-
                 isDismissed = true
-                isRestoring = false
                 true
             } else {
 
@@ -59,34 +56,24 @@ fun <T> SwipeToDismissContainer(
         if(isDismissed) {
             delay(300)
             onDelete(item)
-            isDismissed=false
-            isRestoring=true
         }
     }
 
-    LaunchedEffect(key1 = isRestoring) {
-        if(isRestoring) {
-            delay(animationDuration.toLong())
-            state.reset()
-        }
-    }
 
-    //val alpha by animateFloatAsState(targetValue = if (isDismissed) 0f else 1f)
-        SwipeToDismiss(
-            state = state,
-            background = {
-                DeleteBackground(
-                    swipeDismissState = state,
-                    painter = painter,
-                    backgroundColor = backgroundColor,
-         //           alpha= alpha
-                )
-            },
-            modifier = Modifier.padding(padding),
-            dismissContent = { content(item)  },
-        )
+    SwipeToDismiss(
+        state = state,
+        background = {
+            DeleteBackground(
+                swipeDismissState = state,
+                painter = painter,
+                backgroundColor = backgroundColor,
+                painterTint = painterTint
+            )
+        },
+        modifier = Modifier.padding(padding),
+        dismissContent = { content(item)  },
+    )
 
-   //     )
 
 }
 
@@ -94,9 +81,9 @@ fun <T> SwipeToDismissContainer(
 @Composable
 fun DeleteBackground(
     painter: Painter,
+    painterTint: Color,
     backgroundColor: Color,
     swipeDismissState: DismissState,
-  //  alpha: Float
 ) {
     if(swipeDismissState.dismissDirection == DismissDirection.EndToStart ||
         swipeDismissState.dismissDirection == DismissDirection.StartToEnd) {
@@ -112,7 +99,7 @@ fun DeleteBackground(
             Icon(
                 painter = painter,
                 contentDescription = null,
-                tint = Color.Black,
+                tint = painterTint,
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxHeight()

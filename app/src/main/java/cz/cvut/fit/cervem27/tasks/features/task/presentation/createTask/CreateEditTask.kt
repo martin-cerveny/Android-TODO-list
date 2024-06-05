@@ -1,12 +1,10 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,36 +14,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
+import cz.cvut.fit.cervem27.tasks.core.ui.theme.IconColorsConstants
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.IconColorsConstants
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.ConfirmButtons
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CustomOutlinedTextField
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -62,12 +57,13 @@ fun CreateEditTask(
     ) {
 
         ConfirmButtons(
-            onCreateClick = {
+            onConfirm = {
                 viewModel.addTask()
                 navController.navigateUp()
             },
-            onCancelClick = {navController.navigateUp()}
+            onCancel = {navController.navigateUp()}
         )
+
         TaskEntry(
             screenState.taskName,
             viewModel::onTaskNameChange
@@ -75,8 +71,6 @@ fun CreateEditTask(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        
-        
         Date(
             expanded = screenState.dateSelectExpanded,
             selectedDay = screenState.date,
@@ -89,10 +83,11 @@ fun CreateEditTask(
             category = screenState.category,
             onSelectCategoryClick = viewModel::onSelectCategory
         )
+
         DropDown(
             expanded = screenState.categoriesSelectExpanded,
             onSelectCategory = viewModel::onSelectedCategory,
-            screenState.categories
+            categories =  screenState.categories
         )
 
 
@@ -100,33 +95,6 @@ fun CreateEditTask(
 
 }
 
-@Preview
-@Composable
-fun ConfirmButtons(onCreateClick: () -> Unit = {}, onCancelClick: () -> Unit = {}){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ){
-
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = null,
-            modifier = Modifier
-                .size(30.dp)
-                .clip(CircleShape)
-                .clickable(onClick = onCancelClick)
-
-        )
-
-
-        Button(
-            onClick = {onCreateClick()},
-        ) {
-            Text(text = "Create")
-        }
-    }
-}
 
 
 @Composable
@@ -135,24 +103,20 @@ fun DropDown(
     onSelectCategory: (Category?) -> Unit,
     categories: List<Category>
 ){
-
-
     DropdownMenu(
         expanded = expanded,
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = { onSelectCategory(null) },
         offset = DpOffset(0.dp, 0.dp),
         modifier = Modifier
-            .padding(16.dp)
             .fillMaxSize()
-            .background(Color(0xFF212121), shape = RoundedCornerShape(16.dp))
+            .background(color = MaterialTheme.colorScheme.background)
     ) {
         DropdownItem(category = null, onSelectCategory = onSelectCategory)
-        for(category in categories){
+        for (category in categories) {
             DropdownItem(category = category, onSelectCategory = onSelectCategory)
         }
 
     }
-
 }
 
 @Composable
@@ -161,14 +125,21 @@ fun DropdownItem(
     onSelectCategory: (Category?) -> Unit
 ){
     DropdownMenuItem(
-        text = { Text(text = category?.categoryName?: stringResource(id = R.string.no_category)) },
+        text = {
+            Text(
+                text = category?.categoryName?: stringResource(id = R.string.no_category),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+       },
         leadingIcon = { CategoryIconColoredBackground(
-            iconUrl = category?.url,
+            iconUrl = category?.iconUrl,
             backgroundColor = category?.let{ IconColorsConstants.hslColor(it.colorHue) }
         ) },
-        onClick = { onSelectCategory(category) }
+        onClick = { onSelectCategory(category) },
     )
 }
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -183,22 +154,24 @@ fun Date(
 ){
     val dateState = rememberDatePickerState()
     Row(
-        modifier = Modifier
-            .clickable(
-                onClick = onExpandCalendarClick
-            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Deadline: ${formattedDate(selectedDay)}",
-            fontSize = 18.sp
+            text = stringResource(R.string.deadline, formattedDate(selectedDay)),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_calendar_month_24),
-            contentDescription = "date picker",
-            modifier = Modifier.size(40.dp)
-        )
+        IconButton(
+          onClick = onExpandCalendarClick
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_calendar_month_24),
+                contentDescription = stringResource(R.string.date_picker),
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
     
     if(expanded){ 
@@ -209,16 +182,40 @@ fun Date(
                 TextButton(onClick = {
                     onSelect(dateState.selectedDateMillis?.let { Date(it) })
                 }) {
-                    Text(text = "ok")
+                    Text(text = stringResource(R.string.ok))
                 }
-            }
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            )
+
         ){
             DatePicker(
                 state = dateState,
-                title = {},
+                showModeToggle = false,
+                dateValidator = dateValidator,
+                colors = DatePickerDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    headlineContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    weekdayContentColor = MaterialTheme.colorScheme.primary,
+                    subheadContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    yearContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    currentYearContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedYearContainerColor = MaterialTheme.colorScheme.primary,
+                    dayContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    disabledDayContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                    selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledSelectedDayContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                    selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+                    disabledSelectedDayContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                    todayContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    todayDateBorderColor = MaterialTheme.colorScheme.primary,
+                    dayInSelectionRangeContentColor = MaterialTheme.colorScheme.primary,
+                    dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primary
+                )
 
-                showModeToggle = true,
-                dateValidator = dateValidator
             )
         }
     }
@@ -238,16 +235,15 @@ fun TaskEntry(
     taskName: String,
     onTaskNameChange: (String) -> Unit
 ){
-    OutlinedTextField(
+
+    CustomOutlinedTextField(
+        label = R.string.task,
         value = taskName,
-        label = { Text(text= stringResource(R.string.task)) },
-        onValueChange = {onTaskNameChange(it)},
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
+        onChange = onTaskNameChange
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectedCategory(
     category: Category?,
@@ -255,27 +251,27 @@ fun SelectedCategory(
 ){
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onSelectCategoryClick)
+            .fillMaxWidth(),
+        onClick = onSelectCategoryClick,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             CategoryIconColoredBackground(
-                iconUrl = category?.url,
+                iconUrl = category?.iconUrl,
                 backgroundColor = category?.let {category ->
                     IconColorsConstants.hslColor(category.colorHue)
-                }?:run{
-                    Color(0xFF3D8ECE)
                 }
-
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = category?.categoryName?: stringResource(R.string.no_category),
-                fontSize = 20.sp,
-                color = Color.White
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
 
             )
         }

@@ -15,14 +15,17 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -35,10 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
+import cz.cvut.fit.cervem27.tasks.core.ui.theme.IconColorsConstants
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
 import org.koin.androidx.compose.koinViewModel
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.IconColorsConstants
 
 
 
@@ -52,16 +55,28 @@ fun CategoriesListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(text = stringResource(R.string.categories))})
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.categories),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
         },
         bottomBar = { Spacer(modifier = Modifier.height(0.dp))},
+
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.CategoriesCreateScreen.route) },
-                containerColor = Color(0xFF0591FF),
-                contentColor = Color.Black
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor =  MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_category))
             }
         }
     ) { padding ->
@@ -77,7 +92,6 @@ fun CategoriesListScreen(
                     Box(
                         modifier = Modifier.animateItemPlacement()
                     ) {
-
                         CategoryCard(
                             category = category,
                             onEdit = {
@@ -95,7 +109,7 @@ fun CategoriesListScreen(
             if(screenState.categoryToBeDeleted != null) {
                 DeleteCategoryConfirmationDialog(
                     onConfirm = viewModel::onDeleteConfirmation,
-                    onCancel = viewModel::onDeleteCancelation
+                    onCancel = viewModel::onDeleteCancellation
                 )
             }
         }
@@ -114,11 +128,12 @@ fun CategoryCard(
         verticalAlignment = Alignment.CenterVertically
     ){
         CategoryIconColoredBackground(
-            iconUrl = category.url,
+            iconUrl = category.iconUrl,
             backgroundColor = IconColorsConstants.hslColor(category.colorHue)
         )
 
         Spacer(modifier = Modifier.width(8.dp))
+
         Text(
             text = category.categoryName,
             modifier = Modifier.weight(1f),
@@ -127,10 +142,17 @@ fun CategoryCard(
 
         )
         IconButton(onClick = onEdit) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = stringResource(R.string.edit_category),
+            )
         }
         IconButton(onClick = onDelete) {
-            Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(R.string.delete_icon),
+                tint = MaterialTheme.colorScheme.error
+            )
         }
     }
 
@@ -145,28 +167,48 @@ fun DeleteCategoryConfirmationDialog(
 ){
     AlertDialog(
         icon = {
-            Icon(Icons.Default.Warning, contentDescription = "Warning")
+            Icon(
+                Icons.Default.Warning,
+                contentDescription = stringResource(R.string.warning),
+                tint = MaterialTheme.colorScheme.error
+
+            )
         },
         title = {
-            Text(text = "Delete category?")
+            Text(
+                text = stringResource(R.string.delete_category),
+                color = MaterialTheme.colorScheme.onBackground
+            )
         },
         text = {
-            Text(text = "Category and all tasks belonging to it will be permanently deleted.")
+            Text(
+                text = stringResource(R.string.category_and_all_tasks_belonging_to_it_will_be_permanently_deleted),
+                color = MaterialTheme.colorScheme.onBackground
+            )
         },
         onDismissRequest = onCancel,
         confirmButton = {
             TextButton(
-                onClick = onConfirm
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.error,
+                    containerColor = Color.Transparent
+                )
             ) {
-                Text("Confirm")
+                Text(stringResource(id = R.string.confirm))
             }
         },
         dismissButton = {
             TextButton(
-                onClick = onCancel
+                onClick = onCancel,
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.tertiary,
+                    containerColor = Color.Transparent
+                )
             ) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel))
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.secondaryContainer
     )
 }

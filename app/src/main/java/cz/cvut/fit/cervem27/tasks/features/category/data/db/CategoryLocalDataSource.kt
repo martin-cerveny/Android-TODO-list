@@ -23,7 +23,7 @@ class CategoryLocalDataSource(private val tasksDao: TasksDao) {
         return DbCategory(
             categoryId = categoryId,
             categoryName = categoryName,
-            iconUrl = url,
+            iconUrl = iconUrl,
             iconHue = colorHue
         )
     }
@@ -32,7 +32,7 @@ fun DbCategory.toDomain(): Category {
     return Category(
         categoryId = categoryId,
         categoryName = categoryName,
-        url = iconUrl,
+        iconUrl = iconUrl,
         colorHue = iconHue
     )
 }

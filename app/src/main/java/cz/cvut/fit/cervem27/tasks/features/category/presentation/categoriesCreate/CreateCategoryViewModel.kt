@@ -32,34 +32,33 @@ class CreateCategoryViewModel(
 
     init {
         viewModelScope.launch {
-            id?.let { categoryId ->         // id argument passed -> loading an existing category
+            id?.let { categoryId ->         // id argument passed -> loading an existing category for editing
                 val category = createRepository.getCategory(categoryId)
                 _categoryStateStream.update {
                     it.copy(
                         categoryName = category.categoryName,
-                        iconUrl = category.url,
+                        iconUrl = category.iconUrl,
                         iconHue = category.colorHue
                     )
                 }
             }
         }
 
-
         viewModelScope.launch {
             _categoryStateStream
                 .map { it.iconQuery }
-                .debounce(500)
+                .debounce(500)  // deffer API requests when user types too fast
                 .distinctUntilChanged()
                 .collectLatest { query ->
                     if (query.length >= 3) {
-                        try {
+                        try {   // get icons from API
                             val icons = createRepository.searchIcons(query)
                             _categoryStateStream.update {
                                 it.copy(iconsResult = icons,
                                     searchState = ScreenState.SearchState.OK
                                 )
                             }
-                        } catch (t: Throwable){
+                        } catch (t: Throwable){ // error (e.g. no internet connection)
                             _categoryStateStream.update {
                                 it.copy(iconsResult = emptyList(),
                                     searchState = ScreenState.SearchState.ERROR
@@ -103,7 +102,7 @@ class CreateCategoryViewModel(
             val category = Category(
                 categoryId = id?:0,
                 categoryName = categoryStateStream.value.categoryName,
-                url = categoryStateStream.value.iconUrl,
+                iconUrl = categoryStateStream.value.iconUrl,
                 colorHue =  categoryStateStream.value.iconHue
             )
             id?.let {
@@ -119,26 +118,13 @@ class CreateCategoryViewModel(
            screenState.copy(iconUrl = iconUrl )
         }
     }
-    fun clearCategoryName(){
-        _categoryStateStream.update {
-            it.copy(categoryName = "")
-        }
-    }
 
-    fun clearIconsSearchQuery(){
-        _categoryStateStream.update {
-            it.copy(
-                iconQuery = "",
-                iconsResult = emptyList()
-            )
-        }
-    }
 }
 
 data class ScreenState(
     val categoryName: String = "",
     val iconUrl: String? = null,
-    val iconHue: Float = 0f, // todo
+    val iconHue: Float = 0f,
     val iconQuery: String = "",
     val iconsResult: List<Url> = emptyList(),
     val searchState: SearchState = SearchState.OK

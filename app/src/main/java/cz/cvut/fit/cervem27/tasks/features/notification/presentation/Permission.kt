@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.notification
+package cz.cvut.fit.cervem27.tasks.features.notification.presentation
 
 import android.os.Build
 import androidx.compose.runtime.Composable
@@ -11,19 +11,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-
-//import com.google.accompanist.permissions.ExperimentalPermissionsApi
-//import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import cz.cvut.fit.cervem27.tasks.R
 
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun Permission(
-    rationale: String,
-) {
+fun Permission(){
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val permission = Manifest.permission.POST_NOTIFICATIONS
@@ -33,11 +28,11 @@ fun Permission(
             if (permissionState.status.shouldShowRationale) {
                 AlertDialog(
                     onDismissRequest = { },
-                    title = { Text(text = "title") },
-                    text = { Text(rationale) },
+                    title = { Text(text = stringResource(R.string.notifications)) },
+                    text = { Text(text = stringResource(R.string.notification_permission_rationale)) },
                     confirmButton = {
                         Button(onClick = { permissionState.launchPermissionRequest() }) {
-                            Text(text = "ok")
+                            Text(text = stringResource(id = R.string.ok))
                         }
                     }
                 )

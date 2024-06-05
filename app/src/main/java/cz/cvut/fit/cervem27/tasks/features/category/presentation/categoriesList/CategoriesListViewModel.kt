@@ -1,12 +1,9 @@
 package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
-import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,9 +13,15 @@ class CategoriesListViewModel(
     private val categoryRepository: CategoryRepository,
 ) : ViewModel() {
     private val _screenStateStream =  MutableStateFlow(CategoryListScreenState())
-
     val screenStateStream get() = _screenStateStream.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            categoryRepository.getCategories().collect{ categories ->
+                _screenStateStream.update { it.copy(categories = categories) }
+            }
+        }
+    }
     fun onDeleteConfirmation() {
         screenStateStream.value.categoryToBeDeleted?.let{ category ->
             viewModelScope.launch {
@@ -28,7 +31,7 @@ class CategoriesListViewModel(
         }
     }
 
-    fun onDeleteCancelation(){
+    fun onDeleteCancellation(){
         _screenStateStream.update { it.copy(categoryToBeDeleted = null) }
     }
 
@@ -36,16 +39,6 @@ class CategoriesListViewModel(
         _screenStateStream.update { it.copy(categoryToBeDeleted = category) }
     }
 
-
-
-
-    init {
-        viewModelScope.launch {
-            categoryRepository.getCategories().collect{ categories ->
-                _screenStateStream.update { it.copy(categories = categories) }
-            }
-        }
-    }
 }
 
 

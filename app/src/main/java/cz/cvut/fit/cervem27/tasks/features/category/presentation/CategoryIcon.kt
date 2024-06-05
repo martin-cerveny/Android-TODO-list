@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +34,7 @@ fun CategoryIconColoredBackground(
             .padding(8.dp)
             .size(50.dp)
             .background(
-                color = backgroundColor?:Color(0xFF03A9F4), // todo edit
+                color = backgroundColor ?: MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(14.dp)
             )
 
@@ -64,19 +65,6 @@ fun CategoryIconMissingBackground(
 }
 
 
-object IconColorsConstants {
-    private const val DEFAULT_SATURATION = 0.5f
-    private const val DEFAULT_LIGHTNESS = 0.5f
-
-    fun hslColor(hue: Float): Color {
-        return Color.hsl(
-            hue = hue,
-            saturation = DEFAULT_SATURATION,
-            lightness = DEFAULT_LIGHTNESS
-        )
-    }
-}
-
 
 @Composable
 fun DefaultIcon(modifier: Modifier = Modifier, tint: Color) {
@@ -95,7 +83,7 @@ fun SvgImage(url: Url, modifier: Modifier = Modifier, tint: Color) {
             .data(url)
             .decoderFactory(SvgDecoder.Factory())
             .build(),
-        contentDescription = null,
+        contentDescription = stringResource(R.string.icon),
         modifier = modifier,
         colorFilter = ColorFilter.tint(tint)
     )

@@ -3,7 +3,6 @@ package cz.cvut.fit.cervem27.tasks.core.data.db
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -33,17 +32,17 @@ interface TasksDao {
     @Transaction
     @Query("SELECT * FROM tasks ORDER BY deadline")
     fun getAllTasksWithCategoriesOrderedStream(): Flow<List<DbTaskWithCategory>>
-
+    @Transaction
     @Query("SELECT * FROM tasks WHERE taskId = :id")
     suspend fun getTask(id: Long): DbTaskWithCategory
-    @Delete
-    suspend fun deleteTask(task: DbTask)
     @Insert
     suspend fun insertTask(task: DbTask)
-
     @Update
     suspend fun updateTask(toDbTask: DbTask)
 
+    @Delete
+    suspend fun deleteTask(task: DbTask)
+    @Transaction
     @Query("SELECT * FROM tasks WHERE deadline BETWEEN :start AND :end")
-    suspend fun getTasksForNextDay(start: Long, end: Long): List<DbTask>
+    suspend fun getTasksByDeadline(start: Long, end: Long): List<DbTask>
 }
