@@ -1,9 +1,11 @@
 package cz.cvut.fit.cervem27.tasks.features.category.data
 
 
+import android.util.Log
 import cz.cvut.fit.cervem27.tasks.features.category.data.db.CategoryLocalDataSource
 import cz.cvut.fit.cervem27.tasks.features.category.data.api.IconRemoteDataSource
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
+import kotlinx.coroutines.delay
 
 class CategoryRepository(
     private val remoteDataSource: IconRemoteDataSource,
@@ -17,3 +19,4 @@ class CategoryRepository(
     suspend fun searchIcons(query: String) = remoteDataSource.searchIcons(query)
 
 }
+

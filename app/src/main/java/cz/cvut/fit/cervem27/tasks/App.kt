@@ -5,7 +5,7 @@ import cz.cvut.fit.cervem27.tasks.core.di.coreModule
 import cz.cvut.fit.cervem27.tasks.core.di.workerModule
 import cz.cvut.fit.cervem27.tasks.features.category.di.categoriesModule
 import cz.cvut.fit.cervem27.tasks.features.notification.di.notificationModule
-import cz.cvut.fit.cervem27.tasks.features.notification.data.scheduleDailyDeadlineCheck
+import cz.cvut.fit.cervem27.tasks.features.notification.data.scheduleNotificationsDaily
 import cz.cvut.fit.cervem27.tasks.features.task.di.taskModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -19,7 +19,7 @@ class App : Application(){
             workManagerFactory()
             modules(categoriesModule, coreModule, taskModule, workerModule, notificationModule)
         }
-        scheduleDailyDeadlineCheck(this)
+        scheduleNotificationsDaily(this)
     }
 }
 

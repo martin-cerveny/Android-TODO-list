@@ -61,7 +61,7 @@ class NotificationHelper(
 
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.baseline_calendar_month_24)
+            .setSmallIcon(R.drawable.baseline_task_alt_24)
             .setContentTitle(title)
             .setContentText(content)
             .setContentIntent(pendingIntent)

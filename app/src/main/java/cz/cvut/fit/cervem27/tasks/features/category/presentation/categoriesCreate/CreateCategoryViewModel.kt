@@ -10,6 +10,7 @@ import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Url
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -97,8 +98,9 @@ class CreateCategoryViewModel(
         }
     }
 
-    fun onConfirm(){
+    fun onConfirm(then:()->Unit){
         viewModelScope.launch {
+
             val category = Category(
                 categoryId = id?:0,
                 categoryName = categoryStateStream.value.categoryName,
@@ -110,6 +112,7 @@ class CreateCategoryViewModel(
             }?:run {
                 createRepository.insertCategory(category)
             }
+            then()
         }
     }
 

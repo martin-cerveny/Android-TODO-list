@@ -1,11 +1,12 @@
-package cz.cvut.fit.cervem27.tasks.features.task.presentation
+package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissState
 import androidx.compose.material3.DismissValue
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
@@ -46,7 +48,6 @@ fun <T> SwipeToDismissContainer(
                 isDismissed = true
                 true
             } else {
-
                 false
             }
         }
@@ -70,8 +71,11 @@ fun <T> SwipeToDismissContainer(
                 painterTint = painterTint
             )
         },
-        modifier = Modifier.padding(padding),
-        dismissContent = { content(item)  },
+        modifier = Modifier
+            .padding(padding)
+
+        ,
+        dismissContent = { content(item) },
     )
 
 
@@ -88,21 +92,21 @@ fun DeleteBackground(
     if(swipeDismissState.dismissDirection == DismissDirection.EndToStart ||
         swipeDismissState.dismissDirection == DismissDirection.StartToEnd) {
 
+
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(backgroundColor),
-            contentAlignment = if(swipeDismissState.dismissDirection == DismissDirection.StartToEnd)
-                                    Alignment.CenterStart else Alignment.CenterEnd,
-
+                .background(color = backgroundColor, shape = RoundedCornerShape(12.dp))
+            ,
+            contentAlignment = Alignment.Center
         ) {
+
             Icon(
                 painter = painter,
                 contentDescription = null,
                 tint = painterTint,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxHeight()
+                modifier = Modifier.size(40.dp)
             )
         }
     }

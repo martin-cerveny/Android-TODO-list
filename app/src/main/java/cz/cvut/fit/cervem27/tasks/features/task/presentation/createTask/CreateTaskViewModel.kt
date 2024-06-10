@@ -65,7 +65,7 @@ class CreateTaskViewModel(
         return time >= today
     }
 
-    fun addTask() {
+    fun onConfirm(then: () -> Unit) {
         viewModelScope.launch {
             val task = Task(
                 taskId = id?:0,
@@ -78,6 +78,7 @@ class CreateTaskViewModel(
             }?:run {
                 taskRepository.insertTask(task)
             }
+            then()
         }
     }
 

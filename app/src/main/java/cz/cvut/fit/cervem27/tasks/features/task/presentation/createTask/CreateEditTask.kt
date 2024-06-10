@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerColors
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,8 +60,7 @@ fun CreateEditTask(
 
         ConfirmButtons(
             onConfirm = {
-                viewModel.addTask()
-                navController.navigateUp()
+                viewModel.onConfirm(then = { navController.navigateUp() })
             },
             onCancel = {navController.navigateUp()}
         )
@@ -129,7 +130,9 @@ fun DropdownItem(
             Text(
                 text = category?.categoryName?: stringResource(id = R.string.no_category),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
        },
         leadingIcon = { CategoryIconColoredBackground(
@@ -137,6 +140,7 @@ fun DropdownItem(
             backgroundColor = category?.let{ IconColorsConstants.hslColor(it.colorHue) }
         ) },
         onClick = { onSelectCategory(category) },
+        modifier = Modifier.padding(8.dp)
     )
 }
 
@@ -186,37 +190,79 @@ fun Date(
                 }
             },
             colors = DatePickerDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                headlineContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                weekdayContentColor = MaterialTheme.colorScheme.primary,
+                subheadContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                yearContentColor = Color.Yellow,//MaterialTheme.colorScheme.onSecondaryContainer,
+                currentYearContentColor = Color.Red, //MaterialTheme.colorScheme.onSecondaryContainer,
+                selectedYearContentColor = Color.Magenta, //MaterialTheme.colorScheme.onPrimary,
+                selectedYearContainerColor = Color.Green, //MaterialTheme.colorScheme.primary,
+                dayContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                disabledDayContentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
+                selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+                disabledSelectedDayContentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
+                selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+                disabledSelectedDayContainerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                todayContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                todayDateBorderColor = MaterialTheme.colorScheme.primary,
+                dayInSelectionRangeContentColor = MaterialTheme.colorScheme.primary,
+                dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primary
             )
+
 
         ){
             DatePicker(
                 state = dateState,
                 showModeToggle = false,
                 dateValidator = dateValidator,
+
                 colors = DatePickerDefaults.colors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    headlineContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    headlineContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     weekdayContentColor = MaterialTheme.colorScheme.primary,
-                    subheadContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    yearContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    currentYearContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedYearContainerColor = MaterialTheme.colorScheme.primary,
-                    dayContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    disabledDayContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                    subheadContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    yearContentColor = Color.Yellow,//MaterialTheme.colorScheme.onSecondaryContainer,
+                    currentYearContentColor = Color.Red, //MaterialTheme.colorScheme.onSecondaryContainer,
+                    selectedYearContentColor = Color.Magenta, //MaterialTheme.colorScheme.onPrimary,
+                    selectedYearContainerColor = Color.Green, //MaterialTheme.colorScheme.primary,
+                    dayContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    disabledDayContentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
                     selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledSelectedDayContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+                    disabledSelectedDayContentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
                     selectedDayContainerColor = MaterialTheme.colorScheme.primary,
-                    disabledSelectedDayContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                    todayContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    disabledSelectedDayContainerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+                    todayContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     todayDateBorderColor = MaterialTheme.colorScheme.primary,
                     dayInSelectionRangeContentColor = MaterialTheme.colorScheme.primary,
                     dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primary
                 )
+             //   colors = DatePickerDefaults.colors(
+//                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+//                    titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    headlineContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    weekdayContentColor = MaterialTheme.colorScheme.primary,
+//                    subheadContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    yearContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    currentYearContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    selectedYearContentColor = MaterialTheme.colorScheme.onPrimary,
+//                    selectedYearContainerColor = MaterialTheme.colorScheme.primary,
+//                    dayContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    disabledDayContentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
+//                    selectedDayContentColor = MaterialTheme.colorScheme.onPrimary,
+//                    disabledSelectedDayContentColor = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.5f),
+//                    selectedDayContainerColor = MaterialTheme.colorScheme.primary,
+//                    disabledSelectedDayContainerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+//                    todayContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+//                    todayDateBorderColor = MaterialTheme.colorScheme.primary,
+//                    dayInSelectionRangeContentColor = MaterialTheme.colorScheme.primary,
+//                    dayInSelectionRangeContainerColor = MaterialTheme.colorScheme.primary
+                //)
 
             )
+
         }
     }
 
@@ -260,6 +306,7 @@ fun SelectedCategory(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
         ) {
             CategoryIconColoredBackground(
                 iconUrl = category?.iconUrl,
@@ -271,8 +318,9 @@ fun SelectedCategory(
             Text(
                 text = category?.categoryName?: stringResource(R.string.no_category),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
-
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

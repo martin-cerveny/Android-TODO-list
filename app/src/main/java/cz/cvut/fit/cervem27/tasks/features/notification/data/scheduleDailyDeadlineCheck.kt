@@ -1,37 +1,33 @@
 package cz.cvut.fit.cervem27.tasks.features.notification.data
 
 import android.content.Context
-import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import cz.cvut.fit.cervem27.tasks.features.notification.data.NotificationWorker
-import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-fun scheduleDailyDeadlineCheck(context: Context){
-    val currentDate = Calendar.getInstance()
-    val dueDate = Calendar.getInstance()// Set Execution around 8 AM
-    dueDate.set(Calendar.HOUR_OF_DAY, 8)
-    dueDate.set(Calendar.MINUTE, 0)
-    dueDate.set(Calendar.SECOND, 0)
 
-    if (dueDate.before(currentDate)) {
-        dueDate.add(Calendar.HOUR_OF_DAY, 24)
-    }
-    val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
 
-    val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(
-        1, TimeUnit.DAYS,
-        30, TimeUnit.MINUTES
-    )
-        .setInitialDelay(timeDiff, TimeUnit.MILLISECONDS)
-        .build()
+fun scheduleNotificationsDaily(context: Context){
+
+    // interval during which OneTimeWork is scheduled to display a notification
+    // for the next day at 8am
+    // 23 HOUR ensures
+    // the period of 23 hours (instead of 1 day) would solve the case when the current
+    // NotificationWorker would be executed and the next one would be planned at the same time
+    // ExistingWorkPolicy.KEEP ensures ongoing work won't be disturbed
+    // and the new NotificationWorker will be planned withing 23 hours
+
+
+    val workRequest = PeriodicWorkRequestBuilder<NotificationPlannerWorker>(
+        23, TimeUnit.HOURS
+    ).build()
 
     WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "TasksNotificationDeadlineWorker",
-        ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+        "planner_worker",
+        ExistingPeriodicWorkPolicy.KEEP,
         workRequest
     )
 }
+
+

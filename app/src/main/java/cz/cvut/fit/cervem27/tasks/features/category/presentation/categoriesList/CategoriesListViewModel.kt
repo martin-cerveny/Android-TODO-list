@@ -2,6 +2,8 @@ package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class CategoriesListViewModel(
     private val categoryRepository: CategoryRepository,
+    private val firebaseAnalytics: FirebaseAnalytics
 ) : ViewModel() {
     private val _screenStateStream =  MutableStateFlow(CategoryListScreenState())
     val screenStateStream get() = _screenStateStream.asStateFlow()
@@ -37,6 +40,12 @@ class CategoriesListViewModel(
 
     fun onTryToDeleteCategory(category: Category){
         _screenStateStream.update { it.copy(categoryToBeDeleted = category) }
+    }
+
+    fun onCategoryEdit(){
+        firebaseAnalytics.logEvent("edit_category"){
+            param("param", "value")
+        }
     }
 
 }

@@ -36,6 +36,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.core.ui.theme.IconColorsConstants
@@ -49,7 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CategoriesListScreen(
     viewModel: CategoriesListViewModel = koinViewModel(),
-    navController: NavController
+    navController: NavController,
 ){
     val screenState by viewModel.screenStateStream.collectAsStateWithLifecycle()
 
@@ -95,6 +97,7 @@ fun CategoriesListScreen(
                         CategoryCard(
                             category = category,
                             onEdit = {
+                                viewModel.onCategoryEdit()
                                 navController.navigate(Screen.CategoriesEditScreen.route + "/${category.categoryId}")
                             },
                             onDelete = {
@@ -125,7 +128,8 @@ fun CategoryCard(
 ){
 
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(8.dp)
     ){
         CategoryIconColoredBackground(
             iconUrl = category.iconUrl,

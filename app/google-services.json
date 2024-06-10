@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285563848938",
+    "project_id": "bi-and-7bba5",
+    "storage_bucket": "bi-and-7bba5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285563848938:android:369730697107441fb46f93",
+        "android_client_info": {
+          "package_name": "cz.cvut.fit.cervem27.tasks"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgLbPStAoKWY5BbFfRT6INy2n_uy7qFRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

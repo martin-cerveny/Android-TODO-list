@@ -60,8 +60,8 @@ fun CreateEditCategory(
     Column(modifier = Modifier.padding(8.dp)) {
         ConfirmButtons(
             onConfirm = {
-                viewModel.onConfirm()
-                navController.navigateUp()
+                viewModel.onConfirm(then = {navController.navigateUp()})
+
             },
             onCancel = {
                 navController.navigateUp()

@@ -1,7 +1,7 @@
 package cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
@@ -35,17 +36,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cz.cvut.fit.cervem27.tasks.R
 import cz.cvut.fit.cervem27.tasks.core.Screen
 import cz.cvut.fit.cervem27.tasks.core.ui.theme.IconColorsConstants
-import cz.cvut.fit.cervem27.tasks.features.task.presentation.SwipeToDismissContainer
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconColoredBackground
 import cz.cvut.fit.cervem27.tasks.features.task.domain.Task
 import kotlinx.coroutines.launch
@@ -95,7 +96,7 @@ fun TasksListScreen(
             }
         },
 
-        contentColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.secondaryContainer,
 
         ) { padding ->
         LazyColumn(
@@ -134,18 +135,12 @@ fun TasksListScreen(
                         painter = painterResource(id = R.drawable.icon_park_outline__check_one),
                         painterTint = MaterialTheme.colorScheme.onTertiaryContainer,
                         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        padding = PaddingValues(vertical = 10.dp)
+                        padding = PaddingValues(8.dp)
                     ) {
                         TaskCard(
                             task = task,
                             today = today,
-                            modifier = Modifier
-                                .combinedClickable(
-                                    onClick = {},
-                                    onLongClick = {
-                                        navController.navigate(Screen.TasksEditScreen.route + "/${task.taskId}")
-                                    }
-                                )
+                            onLongClick = {navController.navigate(Screen.TasksEditScreen.route + "/${task.taskId}")}
                         )
                     }
                 }
@@ -158,30 +153,33 @@ fun TasksListScreen(
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TaskCard(task: Task, today: Long, modifier: Modifier = Modifier){
+fun TaskCard(task: Task, today: Long, onLongClick: () -> Unit){
     Card(
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-
+        )
     ){
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = onLongClick
+                )
         ){
             CategoryIconColoredBackground(
                iconUrl =  task.category?.iconUrl,
-                backgroundColor = task.category?.let{ IconColorsConstants.hslColor(it.colorHue) }
+               backgroundColor = task.category?.let{ IconColorsConstants.hslColor(it.colorHue) },
+                modifier = Modifier.padding(8.dp)
             )
             TaskDetails(
                 task = task,
                 today = today
             )
-
-
         }
     }
 }
@@ -196,10 +194,14 @@ fun TaskDetails(task: Task, today: Long){
                 Text(
                     text = category.categoryName,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
+            }?:run{
+                Spacer(modifier = Modifier.weight(1f))
             }
-            Spacer(modifier = Modifier.weight(1f))
 
             task.date?.let{date ->
                 val remainingMillis = date.time - today
@@ -208,14 +210,16 @@ fun TaskDetails(task: Task, today: Long){
                     Text(
                         text = stringResource(R.string.d, remainingDays),
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
         }
         Text(
             text = task.name,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
 
         )
     }

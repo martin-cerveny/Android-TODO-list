@@ -27,11 +27,11 @@ import cz.cvut.fit.cervem27.tasks.features.category.domain.Url
 fun CategoryIconColoredBackground(
     iconUrl: Url?,
     backgroundColor: Color?,
-    tint: Color = Color.Black
+    tint: Color = Color.Black,
+    modifier: Modifier = Modifier
 ){
     Box(
-        modifier = Modifier
-            .padding(8.dp)
+        modifier = modifier
             .size(50.dp)
             .background(
                 color = backgroundColor ?: MaterialTheme.colorScheme.secondary,
