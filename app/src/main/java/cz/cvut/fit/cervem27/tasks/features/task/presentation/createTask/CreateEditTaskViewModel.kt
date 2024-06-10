@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 
-class CreateTaskViewModel(
+class CreateEditTaskViewModel(
     private val taskRepository: TaskRepository,
     private val categoryRepository: CategoryRepository,
     private val savedStateHandle: SavedStateHandle,

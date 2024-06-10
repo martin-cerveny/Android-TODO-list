@@ -41,4 +41,4 @@ For a visual demonstration of how to use the app, you can watch the following vi
 
 ## Firebase App Distribution Link
 
-https://appdistribution.firebase.dev/i/7d825369fb83902e
+https://appdistribution.firebase.dev/i/42617b41ae868f23

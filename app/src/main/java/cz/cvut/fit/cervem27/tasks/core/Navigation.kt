@@ -1,6 +1,5 @@
 package cz.cvut.fit.cervem27.tasks.core
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -9,9 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import cz.cvut.fit.cervem27.tasks.features.task.presentation.listTasks.TasksListScreen
-import cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask.CreateEditTask
+import cz.cvut.fit.cervem27.tasks.features.task.presentation.createTask.CreateEditTaskScreen
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.CategoriesListScreen
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CreateEditCategory
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.createCategory.CreateEditCategoryScreen
 @Composable
 fun Navigation(
     navController: NavHostController,
@@ -38,11 +37,11 @@ fun Navigation(
                 },
             ),
         ) {
-            CreateEditTask(navController = navController)
+            CreateEditTaskScreen(navController = navController)
         }
         //------------------------------------------------------------------------------------------
         composable(route =  Screen.TasksCreateScreen.route){
-            CreateEditTask(navController = navController)
+            CreateEditTaskScreen(navController = navController)
         }
         //------------------------------------------------------------------------------------------
         composable(
@@ -53,11 +52,11 @@ fun Navigation(
                 },
             ),
         ) {
-            CreateEditCategory(navController = navController)
+            CreateEditCategoryScreen(navController = navController)
         }
         //------------------------------------------------------------------------------------------
         composable(route =  Screen.CategoriesCreateScreen.route){
-            CreateEditCategory(navController = navController)
+            CreateEditCategoryScreen(navController = navController)
         }
         //------------------------------------------------------------------------------------------
     }

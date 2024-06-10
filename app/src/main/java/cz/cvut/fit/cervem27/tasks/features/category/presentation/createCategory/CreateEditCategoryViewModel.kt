@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate
+package cz.cvut.fit.cervem27.tasks.features.category.presentation.createCategory
 
 
 
@@ -10,7 +10,6 @@ import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Category
 import cz.cvut.fit.cervem27.tasks.features.category.domain.Url
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-class CreateCategoryViewModel(
+class CreateEditCategoryViewModel(
     private val createRepository: CategoryRepository,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {

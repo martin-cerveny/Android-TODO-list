@@ -5,7 +5,7 @@ import cz.cvut.fit.cervem27.tasks.features.category.data.api.IconRemoteDataSourc
 import cz.cvut.fit.cervem27.tasks.features.category.data.CategoryRepository
 import cz.cvut.fit.cervem27.tasks.features.category.data.db.CategoryLocalDataSource
 import cz.cvut.fit.cervem27.tasks.features.category.data.api.RetrofitProvider
-import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate.CreateCategoryViewModel
+import cz.cvut.fit.cervem27.tasks.features.category.presentation.createCategory.CreateEditCategoryViewModel
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesList.CategoriesListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.factoryOf
@@ -22,6 +22,6 @@ val categoriesModule = module {
 
     singleOf(::CategoryRepository)
 
-    viewModelOf(::CreateCategoryViewModel)
+    viewModelOf(::CreateEditCategoryViewModel)
     viewModelOf(::CategoriesListViewModel)
 }

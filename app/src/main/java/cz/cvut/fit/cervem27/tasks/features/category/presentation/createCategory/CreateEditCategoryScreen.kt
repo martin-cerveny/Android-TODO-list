@@ -1,4 +1,4 @@
-package cz.cvut.fit.cervem27.tasks.features.category.presentation.categoriesCreate
+package cz.cvut.fit.cervem27.tasks.features.category.presentation.createCategory
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -50,9 +50,9 @@ import cz.cvut.fit.cervem27.tasks.features.category.presentation.CategoryIconCol
 import cz.cvut.fit.cervem27.tasks.features.category.presentation.SvgImage
 
 @Composable
-fun CreateEditCategory(
+fun CreateEditCategoryScreen(
     navController: NavController,
-    viewModel: CreateCategoryViewModel = koinViewModel(),
+    viewModel: CreateEditCategoryViewModel = koinViewModel(),
 ){
     val screenState by viewModel.categoryStateStream.collectAsStateWithLifecycle()
 
