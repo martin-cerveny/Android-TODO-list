@@ -21,7 +21,7 @@ val LightColorSchema = lightColorScheme(
     onTertiary = Color(0xFFFFFFFF),
     onTertiaryContainer = Color(0xFF086800),
     error = Color(0xFFCC3737),
-    onSurfaceVariant = Color(0xFF3F51B5),
+    onSurfaceVariant = Color(0xFF000000),
     outlineVariant = Color(0xFF000000),
 )
 
@@ -43,7 +43,7 @@ val DarkColorSchema = lightColorScheme(
     onTertiary = Color(0xFF181819),
     onTertiaryContainer = Color(0xFF1F5C21),
     error = Color(0xFFC47E7E),
-    onSurfaceVariant = Color(0xFF9595FE),
+    onSurfaceVariant = Color(0xFFFFFFFF),
     outlineVariant = Color(0xFFFFFFFF),
 
 )
