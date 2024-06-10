@@ -39,3 +39,6 @@ For a visual demonstration of how to use the app, you can watch the following vi
 
 ![Tasks Demo](tasks_demo.mp4)
 
+## Firebase App Distribution Link
+
+https://appdistribution.firebase.dev/i/7d825369fb83902e
