@@ -1,5 +1,6 @@
-package cz.cvut.fit.cervem27.tasks.core.di
+package cz.cvut.fit.cervem27.tasks.features.notification.di
 
+import cz.cvut.fit.cervem27.tasks.features.notification.data.NotificationPlannerWorker
 import cz.cvut.fit.cervem27.tasks.features.notification.data.NotificationWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
@@ -7,4 +8,5 @@ import org.koin.dsl.module
 
 val workerModule = module {
     worker { NotificationWorker(androidContext(), get(), get()) }
+    worker { NotificationPlannerWorker(androidContext(), get()) }
 }

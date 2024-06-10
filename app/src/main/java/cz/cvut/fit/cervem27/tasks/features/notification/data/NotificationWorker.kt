@@ -15,7 +15,11 @@ import java.util.concurrent.TimeUnit
 
 
 
-class NotificationWorker(context: Context, private val notificationHelper: NotificationHelper, workerParameters: WorkerParameters) : CoroutineWorker(context, workerParameters), KoinComponent {
+class NotificationWorker(
+    context: Context,
+    private val notificationHelper: NotificationHelper,
+    workerParameters: WorkerParameters
+) : CoroutineWorker(context, workerParameters), KoinComponent {
 
     override suspend fun doWork(): Result {
         showNotification()
