@@ -46,7 +46,7 @@ You can assign an icon to your categories. Icon (svg) images are obtained via
 [iconify.design](https://iconify.design/docs/api/)
 
 
-![Tasks Demo](tasks_demo.mp4)
+<video src="tasks_demo.mp4" width="100%" controls></video>
 
 ## Firebase App Distribution Link
 
