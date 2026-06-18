@@ -40,13 +40,12 @@ To get started with the app, follow these steps:
 
 For a visual demonstration of how to use the app, you can watch the following video:
 
+https://github.com/user-attachments/assets/22868456-7ef5-4f07-a732-506fb8aa3a30
+
 ## Used API
 
 You can assign an icon to your categories. Icon (svg) images are obtained via 
 [iconify.design](https://iconify.design/docs/api/)
-
-
-<video src="tasks_demo.mp4" width="100%" controls></video>
 
 ## Firebase App Distribution Link
 
